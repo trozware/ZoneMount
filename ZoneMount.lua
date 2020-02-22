@@ -10,6 +10,7 @@ ZoneMount_EventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
 ZoneMount_EventFrame:RegisterEvent("PLAYER_LOGIN")
 
 local ZoneMount_LastSummon = nil
+local ZoneMount_DebugMode = false
 
 ZoneMount_EventFrame:SetScript("OnEvent",
   function(self, event, ...)
@@ -44,11 +45,23 @@ function ZoneMountCommandHandler(msg)
       print('IsSwimming = ', IsSwimming())
       print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
       print('=========================')
+    elseif msg == 'debug' then
+      ZoneMount_ToggleDebugMode()
     elseif msg == '' then
       ZoneMount_DisplayHelp()
     else
       ZoneMount_SearchForMount(msg)
     end
+end
+
+function ZoneMount_ToggleDebugMode()
+  if ZoneMount_DebugMode == true then
+    ZoneMount_DebugMode = false
+    print('ZoneMount debug mode is now OFF.')
+  else
+    ZoneMount_DebugMode = true
+    print('ZoneMount debug mode is now ON.')
+  end
 end
 
 function ZoneMount_ShowWelcome()
@@ -109,6 +122,7 @@ function ZoneMount_LookForMount()
     return
   end
 
+  local debug_report = ''
   valid_mounts = ZoneMount_ValidMounts()
   -- print('Number of valid mounts = ', #valid_mounts)
 
@@ -151,6 +165,16 @@ function ZoneMount_LookForMount()
     end
   end
 
+  if ZoneMount_DebugMode == true then
+    debug_report = 'Type: ' .. mount_type .. ' = ' .. #type_mounts .. '\n' ..
+      'Zone: ' .. #zone_mounts .. '\n'
+
+    if secondary_mount_type ~= '' then
+      debug_report = debug_report .. 'Type 2: ' .. secondary_mount_type .. ' = ' .. #secondary_type_mounts .. '\n' ..
+            'Zone 2: ' .. #secondary_zone_mounts .. '\n'
+    end
+  end
+
   -- print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
   -- print('Number of zone mounts = ', #zone_mounts)
 
@@ -176,12 +200,17 @@ function ZoneMount_LookForMount()
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
     zone_mounts[2] = zone_mounts[1]
+    local extra_name = ''
     repeat
       mount_index = math.random(#type_mounts)
       if type_mounts[mount_index].name ~= zone_name then
         zone_mounts[#zone_mounts + 1] = type_mounts[mount_index]
+        extra_name = type_mounts[mount_index].name
       end
     until #zone_mounts == 3
+    ZoneMount_LastSummon = nil
+
+    debug_report = debug_report .. 'adding type mount to zone mounts - ' ..  extra_name .. '\n'
   end
 
   if #zone_mounts == 1 and #valid_mounts > 1 then
@@ -189,17 +218,24 @@ function ZoneMount_LookForMount()
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
     zone_mounts[2] = zone_mounts[1]
+    local extra_name = ''
     repeat
       mount_index = math.random(#valid_mounts)
       if valid_mounts[mount_index].name ~= zone_name then
         zone_mounts[#zone_mounts + 1] = valid_mounts[mount_index]
+        extra_name = valid_mounts[mount_index].name
       end
     until #zone_mounts == 3
+    ZoneMount_LastSummon = nil
+
+    debug_report = debug_report .. 'adding valid mount to zone mounts - ' ..  extra_name .. '\n'
   end
 
   if #zone_mounts == 0 then
     zone_mounts = valid_mounts
   end
+
+  debug_report = debug_report .. 'choosing randomly from ' .. #zone_mounts .. ' possible mounts...'
 
   -- print('Choosing randomly from ' .. #zone_mounts .. ' possible mounts...')
   repeat
@@ -218,6 +254,10 @@ function ZoneMount_LookForMount()
   if ZoneMount_IsAlreadyMounted(name) == false then
     C_MountJournal.SummonByID(id)
     ZoneMount_LastSummon = id
+  end
+
+  if ZoneMount_DebugMode == true then
+    print(debug_report)
   end
 end
 
