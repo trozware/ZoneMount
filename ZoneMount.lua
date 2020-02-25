@@ -1,6 +1,8 @@
 -- ISSUES
 ---------
--- detect underwater breathing - warlock buff
+-- detect underwater breathing - warlock buff, potions, quest items
+-- summons a ground mount when on the top of the water in flying zone
+-- test open-air dungeons
 
 ZoneMount = {} 
 
@@ -188,6 +190,9 @@ function ZoneMount_LookForMount()
   end
   if #zone_mounts == 0 then
     zone_mounts = secondary_zone_mounts
+  end
+  if #zone_mounts == 0 then
+    zone_mounts = secondary_type_mounts
   end
   if #type_mounts == 0 then
     type_mounts = secondary_type_mounts
