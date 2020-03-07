@@ -4,6 +4,8 @@
 -- summons a ground mount when on the top of the water in flying zone
 -- test open-air dungeons
 
+-- /dump GetMacroInfo('ZoneMount') => gets ID of selected icon
+
 ZoneMount = {} 
 
 local ZoneMount_EventFrame = CreateFrame("Frame")
@@ -400,10 +402,9 @@ function ZoneMount_SearchForMount(search_name)
 
   local valid_mounts = {}
   for n = 1, num_mounts do
-    mount_id = mount_ids[n]
     creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
-      C_MountJournal.GetDisplayedMountInfo(mount_id)
+      C_MountJournal.GetDisplayedMountInfo(n)
 
     if isUsable and isCollected then
       if strlower(creatureName) == mount_name then
@@ -427,19 +428,29 @@ function ZoneMount_SearchForMount(search_name)
   if totalMatch ~= nil then
     matching_id = totalMatch.ID
     matching_name = totalMatch.name
-  elseif #goodMatch > 0 then
-    mount_index = math.random(#goodMatch)
-    matching_id = goodMatch[mount_index].ID
-    matching_name = goodMatch[mount_index].name
-  elseif #fairMatch > 0 then
-    mount_index = math.random(#fairMatch)
-    matching_id = fairMatch[mount_index].ID
-    matching_name = goodMatch[mount_index].name
+  else
+    local possibles = goodMatch
+    if #goodMatch == 0 then
+      possibles = fairMatch
+    end
+
+    if #possibles > 0 then
+      repeat
+        mount_index = math.random(#possibles)
+        matching_id = possibles[mount_index].ID
+        matching_name = possibles[mount_index].name
+      until (ZoneMount_IsAlreadyMounted(matching_name) == false or #possibles == 1)
+    end
   end
 
   if matching_id ~= nil then
-    ZoneMount_DisplayMessage('Summoning ' .. matching_name, true)
-    C_MountJournal.SummonByID(matching_id)
+    if ZoneMount_IsAlreadyMounted(matching_name) then
+      ZoneMount_DisplayMessage('Already riding ' .. matching_name, true)
+    else
+      local  description = ZoneMount_DescriptionForMount(matching_id)
+      ZoneMount_DisplaySummonMessage(matching_name, '', description)
+      C_MountJournal.SummonByID(matching_id)
+    end
   else
     ZoneMount_DisplayMessage("|c0000FF00ZoneMount: " .. "|c0000FFFFCan't find a mount with a name like |c00FFD100" .. search_name .. ".")
   end
