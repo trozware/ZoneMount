@@ -40,15 +40,16 @@ function ZoneMountCommandHandler(msg)
     elseif msg == 'macro' then
       ZoneMount_CreateMacro()
     elseif msg == 'info' then
-      ZoneMount_DisplayMessage("Current Status:", true)
-      print('IsOutdoors = ', IsOutdoors())
-      print('IsFlyableArea = ', IsFlyableArea())
-      print('IsMounted = ', IsMounted())
-      print('IsFlying = ', IsFlying())
-      print('IsSubmerged = ', IsSubmerged())
-      print('IsSwimming = ', IsSwimming())
-      print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
-      print('=========================')
+      ZoneMount_DisplayInfo()
+      -- ZoneMount_DisplayMessage("Current Status:", true)
+      -- print('IsOutdoors = ', IsOutdoors())
+      -- print('IsFlyableArea = ', IsFlyableArea())
+      -- print('IsMounted = ', IsMounted())
+      -- print('IsFlying = ', IsFlying())
+      -- print('IsSubmerged = ', IsSubmerged())
+      -- print('IsSwimming = ', IsSwimming())
+      -- print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
+      -- print('=========================')
     elseif msg == 'debug' then
       ZoneMount_ToggleDebugMode()
     elseif msg == '' then
@@ -93,6 +94,24 @@ function ZoneMount_DisplaySummonMessage(name, zone, description)
     if description and description ~= '' then
       ChatFrame1:AddMessage("|c0000FFFF" .. description)
     end
+end
+
+function ZoneMount_DisplayInfo()
+  ZoneMount_ShowWelcome()
+
+  local current_mount_info = ZoneMount_CurrentMount()
+  if current_mount_info == '' then
+    ZoneMount_DisplayMessage('You are not mounted, or your current mount cannot be determined.')
+    return
+  end
+
+  local description = ZoneMount_DescriptionForMount(current_mount_info.id)
+  local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFMount: " .. "|c00FFD100" .. current_mount_info.name
+  ChatFrame1:AddMessage(msg)
+
+  if description and description ~= '' then
+    ChatFrame1:AddMessage("|c0000FFFF" .. description)
+  end
 end
 
 function ZoneMount_MountOrDismount() 
@@ -464,11 +483,11 @@ end
 function ZoneMount_DisplayHelp()
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm mount|c0000FFFF to summon an appropriate mount."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zp _name_|c0000FFFF to search for a mount by name."
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm _name_|c0000FFFF to search for a mount by name."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zp macro|c0000FFFF to create a ZoneMount macro action button."
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zp info|c0000FFFF to show some debug info."
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm info|c0000FFFF to show some information about ZoneMount and your mount."
   ChatFrame1:AddMessage(msg)
 end
 
@@ -484,6 +503,48 @@ function ZoneMount_IsAlreadyMounted(mount_name)
   end
 
   return false
+end
+
+function ZoneMount_CurrentMount()
+  if not IsMounted() then
+    return ''
+  end
+
+  local mount_names = ZoneMount_ListMountNames()
+
+  for i = 1, 40 do 
+    name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
+      nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
+      nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
+      = UnitAura('player', i)
+
+    for x = 1, #mount_names do
+      if mount_names[x].name == name then
+        return mount_names[x]
+      end
+    end
+  end
+
+  return ''
+end
+
+function ZoneMount_ListMountNames()
+  C_MountJournal.SetAllSourceFilters(true)
+  C_MountJournal.SetCollectedFilterSetting(1, true)
+  C_MountJournal.SetCollectedFilterSetting(2, false)
+  C_MountJournal.SetSearch('')
+
+  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+
+  local mount_names = {}
+  for n = 1, num_mounts do
+    creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
+      C_MountJournal.GetDisplayedMountInfo(n)
+      mount_names[#mount_names + 1] = { name = creatureName, id = mountID }
+  end
+
+  return mount_names
 end
 
 function ZoneMount_CreateMacro()
