@@ -25,8 +25,8 @@ Slash Commands:
 
 - /zm mount - mount or dismount.
 - /zm about - show info about your current mount.
-- /zm __name__ - search for a mount by name.
-- /zm macro - search for a mount for one with by name (searching is case-insensitive and will find partial matches).
+- /zm __name__ - search for a mount by name (searching is case-insensitive and will find partial matches).
+- /zm macro - create a macro for easy use of Zone Mount.  
 
 
 Version History:
