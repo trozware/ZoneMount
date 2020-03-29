@@ -1,10 +1,12 @@
 -- ISSUES
 ---------
 -- detect underwater breathing - warlock buff, potions, quest items
--- summons a ground mount when on the top of the water in flying zone
--- test open-air dungeons
 
 -- /dump GetMacroInfo('ZoneMount') => gets ID of selected icon
+-- 134400 = Question mark icon
+-- 132226 = Horse shoe icon - gold
+-- 136103 = Horse shoe icon - blue
+
 
 ZoneMount = {} 
 
@@ -25,6 +27,7 @@ ZoneMount_EventFrame:SetScript("OnEvent",
       -- print('Mount changed event')
     elseif event == "PLAYER_LOGIN" then
       ZoneMount_ShowWelcome()
+      ZoneMount_UpdateMacro()
     end  
   end
 )
@@ -39,7 +42,7 @@ function ZoneMountCommandHandler(msg)
       ZoneMount_MountOrDismount()
     elseif msg == 'macro' then
       ZoneMount_CreateMacro()
-    elseif msg == 'info' then
+    elseif msg == 'about' then
       ZoneMount_DisplayInfo()
       -- ZoneMount_DisplayMessage("Current Status:", true)
       -- print('IsOutdoors = ', IsOutdoors())
@@ -50,9 +53,9 @@ function ZoneMountCommandHandler(msg)
       -- print('IsSwimming = ', IsSwimming())
       -- print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
       -- print('=========================')
-    elseif msg == 'debug' then
-      ZoneMount_ToggleDebugMode()
-    elseif msg == '' then
+    -- elseif msg == 'debug' then
+    --   ZoneMount_ToggleDebugMode()
+    elseif msg == '' or msg == 'help' then
       ZoneMount_DisplayHelp()
     else
       ZoneMount_SearchForMount(msg)
@@ -483,12 +486,13 @@ end
 function ZoneMount_DisplayHelp()
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm mount|c0000FFFF to summon an appropriate mount."
   ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm about|c0000FFFF to show some information about ZoneMount and your mount."
+  ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm _name_|c0000FFFF to search for a mount by name."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm info|c0000FFFF to show some information about ZoneMount and your mount."
-  ChatFrame1:AddMessage(msg)
+
 end
 
 function ZoneMount_IsAlreadyMounted(mount_name)
@@ -555,13 +559,22 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  -- icon = 132226
-  local macro_id = CreateMacro("ZoneMount", "132226", "/zm mount", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/zm mount", nil, nil);
   if macro_id then
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
     PickupMacro('ZoneMount')
   else
     ZoneMount_DisplayMessage('There was a problem creating your ZoneMount macro.', true)
+  end
+end
+
+function ZoneMount_UpdateMacro() 
+  local existing_macro = GetMacroInfo('ZoneMount')
+  if existing_macro then
+    local macroIndex = GetMacroIndexByName("ZoneMount")
+    if macroIndex > 0 then
+      EditMacro(macroIndex, "ZoneMount", "136103", "/zm mount", nil, nil)
+    end
   end
 end
 

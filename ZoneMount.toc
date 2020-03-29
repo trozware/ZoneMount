@@ -1,7 +1,7 @@
-## Title: ZoneMount
+## Title: Zone Mount
 ## Interface: 80300
 ## Author: Sarah Reichelt
-## Version: 0.0.7
+## Version: 1.0.0
 
 ## SavedVariables: 
 ## X-Category: Mounts
