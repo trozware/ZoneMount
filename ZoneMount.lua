@@ -149,8 +149,12 @@ function ZoneMount_LookForMount()
   end
 
   local debug_report = ''
-  valid_mounts = ZoneMount_ValidMounts()
+  local valid_mounts = ZoneMount_ValidMounts()
   -- print('Number of valid mounts = ', #valid_mounts)
+  if #valid_mounts == 0 then
+    ZoneMount_DisplayMessage(ZoneMount_FailReason(), true)
+    return
+  end
 
   local zone_mounts = {}
   local type_mounts = {}
@@ -159,8 +163,8 @@ function ZoneMount_LookForMount()
   local zone_names = ZoneMount_ZoneNames()
 
   for n = 1, #valid_mounts do
-    mount_id = valid_mounts[n].ID
-    creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+    local mount_id = valid_mounts[n].ID
+    local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
       = C_MountJournal.GetMountInfoExtraByID(mount_id)
 
@@ -301,7 +305,7 @@ function ZoneMount_ValidMounts()
 
   local valid_mounts = {}
   for n = 1, num_mounts do
-    creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
@@ -309,7 +313,22 @@ function ZoneMount_ValidMounts()
       valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
     end
   end
+
   return valid_mounts
+end
+
+function ZoneMount_FailReason()
+  -- called when there are no valid mounts
+  local total_mounts = C_MountJournal.GetNumMounts()
+  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+
+  if total_mounts == 0 then
+    return 'You have no mounts.'
+  elseif num_mounts == 0 then
+    return 'You have no mounts that can be used here.'
+  else
+    return 'You are not allowed to mount in this area.'
+  end
 end
 
 function ZoneMount_TypeOfMountToSummon()
@@ -337,12 +356,12 @@ function ZoneMount_ShouldLookForNewMount()
     return 'You are dead.'
   end
 
-  spellName, _, _, _, _, _, _, _, _, _ = UnitCastingInfo("player")
+  local spellName, _, _, _, _, _, _, _, _, _ = UnitCastingInfo("player")
   if spellName ~= nil then
     return 'You are casting ' .. spellName .. '.'
   end 
 
-  channelName, _, _, _, _, _, _, _ = UnitChannelInfo("player")
+  local channelName, _, _, _, _, _, _, _ = UnitChannelInfo("player")
   if channelName ~= nil then
     return 'You are channeling ' .. channelName .. '.'
   end
@@ -424,7 +443,7 @@ function ZoneMount_SearchForMount(search_name)
 
   local valid_mounts = {}
   for n = 1, num_mounts do
-    creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
@@ -479,11 +498,12 @@ function ZoneMount_SearchForMount(search_name)
 end
 
 function ZoneMount_DescriptionForMount(mount_id)
-    _, description, _, _, _,  _, _, _, _  = C_MountJournal.GetMountInfoExtraByID(mount_id)
+    local _, description, _, _, _,  _, _, _, _  = C_MountJournal.GetMountInfoExtraByID(mount_id)
     return description
 end
 
 function ZoneMount_DisplayHelp()
+  local msg
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm mount|c0000FFFF to summon an appropriate mount."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm about|c0000FFFF to show some information about ZoneMount and your mount."
@@ -492,12 +512,11 @@ function ZoneMount_DisplayHelp()
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
-
 end
 
 function ZoneMount_IsAlreadyMounted(mount_name)
   for i = 1, 40 do 
-    name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
+    local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
       nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
       nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
       = UnitAura('player', i)
@@ -517,7 +536,7 @@ function ZoneMount_CurrentMount()
   local mount_names = ZoneMount_ListMountNames()
 
   for i = 1, 40 do 
-    name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
+    local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
       nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
       nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
       = UnitAura('player', i)
@@ -542,7 +561,7 @@ function ZoneMount_ListMountNames()
 
   local mount_names = {}
   for n = 1, num_mounts do
-    creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
       mount_names[#mount_names + 1] = { name = creatureName, id = mountID }
@@ -622,16 +641,16 @@ function ZoneMount_SourceInValidZone(source, zones)
 end
 
 function ZoneMount_InTable(tbl, item)
-    for key, value in pairs(tbl) do
-        if value == item then return key end
-    end
-    return false
+  for key, value in pairs(tbl) do
+      if value == item then return key end
+  end
+  return false
 end
 
 function ZoneMount_IsUnderwater()
-  timer, initial, maxvalue, scale, paused, label = GetMirrorTimerInfo(2)
-  -- print('Checking for underwater: timer = ' .. timer .. ' Paused = ' .. paused)
-  if timer == 'BREATH' then
+  local timer, initial, maxvalue, scale, paused, label = GetMirrorTimerInfo(2)
+  -- print('Checking for underwater: timer = ' .. timer .. ' Scale = ' .. scale .. ' Paused = ' .. paused)
+  if timer == 'BREATH' and paused == 0 and scale < 0 then
     return true
   end
   return false

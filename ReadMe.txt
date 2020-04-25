@@ -32,4 +32,5 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.0.1: Improved checking for areas where it is not possible to mount.
 v 1.0.0: Initial release.
