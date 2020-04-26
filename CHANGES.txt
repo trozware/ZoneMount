@@ -1,2 +1,3 @@
+- v 1.0.2: Dismount option, bug fix for getting map zone names.
 - v 1.0.1: Improved checking for areas where it is not possible to mount.
 - v 1.0.0: Initial release.

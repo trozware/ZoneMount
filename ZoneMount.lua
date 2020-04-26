@@ -17,6 +17,8 @@ ZoneMount_EventFrame:RegisterEvent("PLAYER_LOGIN")
 
 local ZoneMount_LastSummon = nil
 local ZoneMount_DebugMode = false
+local ZoneMount_LastDismountCommand = nil
+local ZoneMount_HasMacroInstalled = false
 
 ZoneMount_EventFrame:SetScript("OnEvent",
   function(self, event, ...)
@@ -118,10 +120,28 @@ function ZoneMount_DisplayInfo()
 end
 
 function ZoneMount_MountOrDismount() 
-  if IsMounted() and not IsFlying() then
-    Dismount()
+  if IsMounted() then
+    if not IsFlying() then
+      Dismount()
+      ZoneMount_LastDismountCommand = nil
+    elseif ZoneMount_HasMacroInstalled then
+      local now = GetTime()           -- time in seconds
+      if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
+        Dismount()
+      else
+        local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
+        formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
+        ChatFrame1:AddMessage(formatted_msg)
+
+        ZoneMount_LastDismountCommand = now
+      end
+    else
+      ZoneMount_LookForMount()
+      ZoneMount_LastDismountCommand = nil
+    end
   else
     ZoneMount_LookForMount()
+    ZoneMount_LastDismountCommand = nil
   end
 end
 
@@ -573,6 +593,7 @@ end
 function ZoneMount_CreateMacro()
   local existing_macro = GetMacroInfo('ZoneMount')
   if existing_macro then
+    ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro already exists. Drag it into your action bar for easy access.', true)
     PickupMacro('ZoneMount')
     return
@@ -580,6 +601,7 @@ function ZoneMount_CreateMacro()
 
   local macro_id = CreateMacro("ZoneMount", "136103", "/zm mount", nil, nil);
   if macro_id then
+    ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
     PickupMacro('ZoneMount')
   else
@@ -594,6 +616,7 @@ function ZoneMount_UpdateMacro()
     if macroIndex > 0 then
       EditMacro(macroIndex, "ZoneMount", "136103", "/zm mount", nil, nil)
     end
+    ZoneMount_HasMacroInstalled = true
   end
 end
 
@@ -618,13 +641,14 @@ function ZoneMount_ZoneNames()
     end
   end
 
-  local children = C_Map.GetMapChildrenInfo(map_id, _, true)
+  local children = C_Map.GetMapChildrenInfo(map_id)  -- , _, true)
   for n = 1, #children do
     if ZoneMount_InTable(zone_names, children[n].name) == false then
       zone_names[#zone_names + 1] = children[n].name
     end
   end
 
+  -- print(map_id, #zone_names)
   -- for n = 1, #zone_names do
   --   print(zone_names[n])
   -- end
