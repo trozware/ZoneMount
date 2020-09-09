@@ -76,7 +76,7 @@ end
 
 function ZoneMount_ShowWelcome()
   local v = GetAddOnMetadata("ZoneMount", "Version") 
-  local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm help |c0000FFFFfor help."
+  local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm |c0000FFFFfor help."
   ZoneMount_DisplayMessage(msg, false)
 end
 
@@ -356,7 +356,7 @@ function ZoneMount_TypeOfMountToSummon()
     return 'none'
   elseif IsSubmerged() or IsSwimming() then
     return 'water'
-  elseif IsFlyableArea() then
+  elseif IsFlyableArea() and UnitLevel("player") >= 60 then
     return 'flying'
   else
     return 'ground'

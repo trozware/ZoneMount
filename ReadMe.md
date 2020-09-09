@@ -45,6 +45,7 @@ Check out my iPhone app [WoW Stats](https://itunes.apple.com/app/wow-stats/id136
 
 ### Version History
 
+- v 1.0.3: For toons less than level 60, ground mounts will always be preferred, even in a flying region.
 - v 1.0.2: Dismount option, bug fix for getting map zone names.
 - v 1.0.1: Improved checking for areas where it is not possible to mount.
 - v 1.0.0: Initial release.
