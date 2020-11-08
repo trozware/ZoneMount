@@ -626,22 +626,36 @@ function ZoneMount_ZoneNames()
   local zone_names = {}
 
   zone_names[#zone_names + 1] = GetZoneText()
-  zone_names[#zone_names + 1] = GetSubZoneText()
+  local subZone = GetSubZoneText()
+  if subZone then
+    zone_names[#zone_names + 1] = subZone
+  end
+
+  if info == nil or info.name == nil then
+    return zone_names
+  end
 
   if ZoneMount_InTable(zone_names, info.name) == false then
     zone_names[#zone_names + 1] = info.name
   end
+  
+  if info.mapType == nil then
+    return zone_names
+  end
 
-  while (info.mapType < 3) do
+  local previous_map_id = map_id
+
+  while (info and info.mapType and info.mapType < 3) do
     map_id = info.parentMapID
     info = C_Map.GetMapInfo(map_id)
 
-    if ZoneMount_InTable(zone_names, info.name) == false then
+    if info and info.name and ZoneMount_InTable(zone_names, info.name) == false then
+      previous_map_id = map_id
       zone_names[#zone_names + 1] = info.name
     end
   end
 
-  local children = C_Map.GetMapChildrenInfo(map_id)  -- , _, true)
+  local children = C_Map.GetMapChildrenInfo(previous_map_id)  -- , _, true)
   for n = 1, #children do
     if ZoneMount_InTable(zone_names, children[n].name) == false then
       zone_names[#zone_names + 1] = children[n].name
