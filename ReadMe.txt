@@ -34,6 +34,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.0.6: Updated for 9.0.2   
 v 1.0.5: Bug fix for summoning in weird places like the Dalaran Plank.
 v 1.0.4: Updated for Shadowlands pre-patch.
 v 1.0.3: For toons less than level 60, ground mounts will always be preferred, even in a flying region.
