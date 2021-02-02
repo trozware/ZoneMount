@@ -314,24 +314,94 @@ function ZoneMount_LookForMount()
   end
 end
 
+function ZoneMount_IsDruid()
+  local _, classFilename, _ = UnitClass('player')
+  if classFilename == 'DRUID' then
+    return true
+  end
+  return false
+end
+
+function ZoneMount_CheckForDruidShapeshift(id)
+  local _, classFilename, _ = UnitClass('player')
+  if classFilename == 'DRUID' then
+    print('Is a druid')
+    local shapeIndex = GetShapeshiftForm(true)
+    print('Shape = ' ..  shapeIndex)
+    ZoneMount_PrintShape()
+
+    if shapeIndex == 3 and IsFlying() then
+      print('Travel form - flying')
+      return
+    end
+    -- 0 is normal, 3 is travel form and works, anything else blocks mounting
+    if shapeIndex > 0 then
+      print('Cancelling')
+      CancelShapeshiftForm()
+    end
+  end
+
+  C_MountJournal.SummonByID(id)
+  ZoneMount_LastSummon = id
+end
+
+function ZoneMount_PrintShape()
+  local shapeIndex = GetShapeshiftForm(true)
+  if shapeIndex == 0 then
+    print('Not shifted')
+  elseif shapeIndex == 1 then
+    print('Bear form')
+  elseif shapeIndex == 2 then
+    print('Cat form')
+  elseif shapeIndex == 3 then
+    print('Travel form')
+  elseif shapeIndex == 4 then
+    print('4: Moon, tree or stag form')
+  elseif shapeIndex == 5 then
+    print('5: Moon, tree or stag form')
+  elseif shapeIndex == 6 then
+    print('6: Moon, tree or stag form')
+  else
+    print('Unknown form')
+  end
+end
+
 function ZoneMount_ValidMounts()
   C_MountJournal.SetAllSourceFilters(true)
   C_MountJournal.SetCollectedFilterSetting(1, true)
   C_MountJournal.SetCollectedFilterSetting(2, false)
   C_MountJournal.SetSearch('')
 
+  local playerLevel = UnitLevel("player")
+  local inMaw = ZoneMount_InTheMaw()
+
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
   -- print('Number of displayed mounts = ', num_mounts)
 
   local valid_mounts = {}
+  local chauffeur_mounts = {}
+
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if isUsable and isCollected then
-      valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+    if inMaw then
+      if isCollected and (mountID == 1304 or mountID == 1442) then
+        valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+      end
+    elseif isUsable and isCollected then
+      if (mountID == 678 or mountID == 679) and playerLevel > 10 then
+        chauffeur_mounts[#chauffeur_mounts + 1] = { name = creatureName, ID = mountID }
+      else
+        valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+      end
     end
+  end
+
+  -- don't use chauffered mount if 10 or higher as it is slower, unless htere are no other options
+  if #valid_mounts == 0 and not inMaw then
+    valid_mounts = chauffeur_mounts
   end
 
   return valid_mounts
@@ -443,6 +513,22 @@ function ZoneMount_InVashjir()
   end
 end
 
+function ZoneMount_InTheMaw()
+  local zone = GetZoneText()
+  if zone == 'The Maw' then
+    return true
+  end
+
+  local zone_names = ZoneMount_ZoneNames()
+  for n = 1, #zone_names do
+    if zone_names[n] == 'The Maw' then
+      return true
+    end
+  end
+
+  return false
+end
+
 function ZoneMount_SearchForMount(search_name)
   if ZoneMount_ShouldLookForNewMount() == 'no' then
     ZoneMount_DisplayMessage('Not a good time right now...', true)
@@ -508,9 +594,10 @@ function ZoneMount_SearchForMount(search_name)
     if ZoneMount_IsAlreadyMounted(matching_name) then
       ZoneMount_DisplayMessage('Already riding ' .. matching_name, true)
     else
-      local  description = ZoneMount_DescriptionForMount(matching_id)
+      local description = ZoneMount_DescriptionForMount(matching_id)
       ZoneMount_DisplaySummonMessage(matching_name, '', description)
       C_MountJournal.SummonByID(matching_id)
+      ZoneMount_LastSummon = matching_id
     end
   else
     ZoneMount_DisplayMessage("|c0000FF00ZoneMount: " .. "|c0000FFFFCan't find a mount with a name like |c00FFD100" .. search_name .. ".")
@@ -599,7 +686,7 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/zm mount", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/cancelform\n/zm mount", nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -614,7 +701,7 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/zm mount", nil, nil)
+      EditMacro(macroIndex, "ZoneMount", "136103", "/cancelform\n/zm mount", nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end
@@ -718,5 +805,26 @@ function ZoneMount_ListMountTypes()
 
   for key, value in pairs(types) do
       print('Type ' .. key .. ': ' .. value)
+  end
+end
+
+function ZoneMount_Tests()
+  C_MountJournal.SetAllSourceFilters(true)
+  C_MountJournal.SetCollectedFilterSetting(1, true)
+  C_MountJournal.SetCollectedFilterSetting(2, true)
+  C_MountJournal.SetCollectedFilterSetting(3, true)
+
+  C_MountJournal.SetSearch('')
+
+  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+
+  for n = 1, num_mounts do
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
+      C_MountJournal.GetDisplayedMountInfo(n)
+
+      if creatureName == 'Mawsworn Soulhunter' or creatureName == 'Corridor Creeper' then
+        print(creatureName, mountID)
+      end
   end
 end
