@@ -34,6 +34,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.0.8: Workaround for WoW APIs not allowing flying in Draenor.
 v 1.0.7: Will summon valid mounts in The Maw, slow chauffeured mounts only used at low level, druid shapes cancelled in macro before mounting.
 v 1.0.6: Updated for 9.0.2   
 v 1.0.5: Bug fix for summoning in weird places like the Dalaran Plank.

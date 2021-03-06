@@ -422,11 +422,14 @@ function ZoneMount_FailReason()
 end
 
 function ZoneMount_TypeOfMountToSummon()
+  --  TODO: IsFlyableArea returns false in Draenor where you can now fly
   if IsIndoors() then
     return 'none'
   elseif IsSubmerged() or IsSwimming() then
     return 'water'
   elseif IsFlyableArea() and UnitLevel("player") >= 30 then
+    return 'flying'
+  elseif ZoneMount_InDraenor() and UnitLevel("player") >= 30 then
     return 'flying'
   else
     return 'ground'
@@ -527,6 +530,19 @@ function ZoneMount_InTheMaw()
   end
 
   return false
+end
+
+function ZoneMount_InDraenor()
+  local zone = GetZoneText()
+  print(zone)
+  
+  if zone == 'Shadowmoon Valley' or zone == 'Frostfore Ridge' or zone == 'Ashran'
+    or zone == 'Gorgrond' or zone == 'Nagrand' or zone == 'Spires of Arak' or zone == 'Talador' 
+    or zone == 'Tanaan Jungle' or zone == 'Lunarfall' or zone == 'Frostwall' then
+    return true
+  else
+    return false
+  end
 end
 
 function ZoneMount_SearchForMount(search_name)
