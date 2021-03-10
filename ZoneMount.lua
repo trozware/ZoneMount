@@ -387,7 +387,7 @@ function ZoneMount_ValidMounts()
       C_MountJournal.GetDisplayedMountInfo(n)
 
     if inMaw then
-      if isCollected and (mountID == 1304 or mountID == 1442) then
+      if isCollected and (mountID == 1304 or mountID == 1441 or mountID == 1442) then
         valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
       end
     elseif isUsable and isCollected then
@@ -837,7 +837,7 @@ function ZoneMount_Tests()
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-      if creatureName == 'Mawsworn Soulhunter' or creatureName == 'Corridor Creeper' then
+      if creatureName == 'Mawsworn Soulhunter' or creatureName == 'Corridor Creeper'  or creatureName == 'Bound Shadehound' then
         print(creatureName, mountID)
       end
   end

@@ -45,6 +45,7 @@ Check out my iPhone app [WoW Stats](https://itunes.apple.com/app/wow-stats/id136
 
 ### Version History
 
+- v 1.0.10: Included Bound Shadehound for mounting in the Maw.
 - v 1.0.9: Updated for Patch 9.0.5.
 - v 1.0.8: Workaround for WoW APIs not allowing flying in Draenor.
 - v 1.0.7: Will summon valid mounts in The Maw, slow chauffeured mounts only used at low level, druid shapes cancelled in macro before mounting.
