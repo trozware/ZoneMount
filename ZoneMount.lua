@@ -533,9 +533,7 @@ function ZoneMount_InTheMaw()
 end
 
 function ZoneMount_InDraenor()
-  local zone = GetZoneText()
-  print(zone)
-  
+  local zone = GetZoneText()  
   if zone == 'Shadowmoon Valley' or zone == 'Frostfore Ridge' or zone == 'Ashran'
     or zone == 'Gorgrond' or zone == 'Nagrand' or zone == 'Spires of Arak' or zone == 'Talador' 
     or zone == 'Tanaan Jungle' or zone == 'Lunarfall' or zone == 'Frostwall' then
