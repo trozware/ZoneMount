@@ -1,3 +1,4 @@
+- v 1.1.0: Fix for riding now available in The Maw for all mounts. Added options to hide mount info in chat and to use favorites only. Set using Game Menu > Interface > AddOns > ZoneMount.
 - v 1.0.10: Included Bound Shadehound for mounting in the Maw.
 - v 1.0.9: Updated for Patch 9.0.5.
 - v 1.0.8: Workaround for WoW APIs not allowing flying in Draenor.

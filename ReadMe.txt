@@ -21,6 +21,8 @@ If you really do want to plummet out of the sky, click the macro button twice in
 
 Read the mount's name and description in the Chat. These descriptions can be very funny - yet another way we are missing out on some good content.
 
+Use Game Menu > Interface > AddOns > ZoneMount to set whether you want the mount info to appear in the chat and to make Zone Mount choose from your favorite mounts only.
+
 
 Slash Commands:
 ==============
@@ -34,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.1.0: Fix for riding now available in The Maw for all mounts. Added options to hide mount info in chat and to use favorites only. Set using Game Menu > Interface > AddOns > ZoneMount.
 v 1.0.10: Included Bound Shadehound for mounting in the Maw.
 v 1.0.9: Updated for Patch 9.0.5.
 v 1.0.8: Workaround for WoW APIs not allowing flying in Draenor.

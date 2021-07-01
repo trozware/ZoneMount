@@ -37,6 +37,15 @@ ZoneMount_EventFrame:SetScript("OnEvent",
 function ZoneMount:Initialize()
   SLASH_ZONEMOUNT1, SLASH_ZONEMOUNT2 = "/zonemount", "/zm"
   SlashCmdList["ZONEMOUNT"] = ZoneMountCommandHandler
+
+  if not zoneMountSettings then
+		zoneMountSettings = {
+      favsOnly = false,
+      hideInfo = false
+		}
+  end
+
+  ZoneMount_addInterfaceOptions()
 end
 
 function ZoneMountCommandHandler(msg) 
@@ -90,15 +99,19 @@ function ZoneMount_DisplayMessage(msg, format)
 end
 
 function ZoneMount_DisplaySummonMessage(name, zone, description)
-    local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFSummoning " .. "|c00FFD100" .. name
-    if zone and zone ~= '' then
-      msg = msg .. "|c0000FFFF from " .. zone.. "."
-    end
-    ChatFrame1:AddMessage(msg)
+  if zoneMountSettings.hideInfo then
+    return
+  end
 
-    if description and description ~= '' then
-      ChatFrame1:AddMessage("|c0000FFFF" .. description)
-    end
+  local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFSummoning " .. "|c00FFD100" .. name
+  if zone and zone ~= '' then
+    msg = msg .. "|c0000FFFF from " .. zone.. "."
+  end
+  ChatFrame1:AddMessage(msg)
+
+  if description and description ~= '' then
+    ChatFrame1:AddMessage("|c0000FFFF" .. description)
+  end
 end
 
 function ZoneMount_DisplayInfo()
@@ -380,23 +393,28 @@ function ZoneMount_ValidMounts()
 
   local valid_mounts = {}
   local chauffeur_mounts = {}
+  local maw_mounts = {}
 
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if inMaw then
+    if zoneMountSettings.favsOnly == false or isFavorite == true then
       if isCollected and (mountID == 1304 or mountID == 1441 or mountID == 1442) then
-        valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
-      end
-    elseif isUsable and isCollected then
-      if (mountID == 678 or mountID == 679) and playerLevel > 10 then
-        chauffeur_mounts[#chauffeur_mounts + 1] = { name = creatureName, ID = mountID }
-      else
-        valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+        maw_mounts[#maw_mounts + 1] = { name = creatureName, ID = mountID }
+      elseif isUsable and isCollected then
+        if (mountID == 678 or mountID == 679) and playerLevel > 10 then
+          chauffeur_mounts[#chauffeur_mounts + 1] = { name = creatureName, ID = mountID }
+        else
+          valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+        end
       end
     end
+  end
+
+  if #valid_mounts == 0 and inMaw then
+    valid_mounts = maw_mounts
   end
 
   -- don't use chauffered mount if 10 or higher as it is slower, unless htere are no other options
@@ -841,4 +859,46 @@ function ZoneMount_Tests()
         print(creatureName, mountID)
       end
   end
+end
+
+
+function ZoneMount_addInterfaceOptions()
+  local y = -16
+  ZonePet.panel = CreateFrame("Frame", "ZonemountPanel", UIParent )
+  ZonePet.panel.name = "ZoneMount"
+  InterfaceOptions_AddCategory(ZonePet.panel)
+
+  local Title = ZonePet.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+  Title:SetJustifyV('TOP')
+  Title:SetJustifyH('LEFT')
+  Title:SetPoint('TOPLEFT', 16, y)
+  local v = GetAddOnMetadata("ZoneMount", "Version") 
+  Title:SetText('ZoneMount v' .. v)
+  y = y - 44
+
+  local btnFT = CreateFrame("CheckButton", nil, ZonePet.panel, "UICheckButtonTemplate")
+	btnFT:SetSize(26,26)
+	btnFT:SetHitRectInsets(-2,-200,-2,-2)
+	btnFT.text:SetText('  Show mount info in Chat')
+	btnFT.text:SetFontObject("GameFontNormal")
+  btnFT:SetPoint('TOPLEFT', 40, y)
+  btnFT:SetChecked(not zoneMountSettings.hideInfo)
+  btnFT:SetScript("OnClick",function() 
+    local isChecked = btnFT:GetChecked()
+    zoneMountSettings.hideInfo = not isChecked
+  end)
+  y = y - 40
+
+  local btn2 = CreateFrame("CheckButton", nil, ZonePet.panel, "UICheckButtonTemplate")
+	btn2:SetSize(26,26)
+	btn2:SetHitRectInsets(-2,-200,-2,-2)
+	btn2.text:SetText('  Select from Favorites only')
+	btn2.text:SetFontObject("GameFontNormal")
+  btn2:SetPoint('TOPLEFT', 40, y)
+  btn2:SetChecked(zoneMountSettings.favsOnly)
+  btn2:SetScript("OnClick",function() 
+    local isChecked = btn2:GetChecked()
+    zoneMountSettings.favsOnly = isChecked
+  end)
+  y = y - 40
 end
