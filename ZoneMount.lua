@@ -55,6 +55,8 @@ function ZoneMountCommandHandler(msg)
       ZoneMount_CreateMacro()
     elseif msg == 'about' then
       ZoneMount_DisplayInfo()
+    elseif msg == 'do' or msg == 'act' then
+      ZoneMount_DoSpecial()
       -- ZoneMount_DisplayMessage("Current Status:", true)
       -- print('IsOutdoors = ', IsOutdoors())
       -- print('IsFlyableArea = ', IsFlyableArea())
@@ -651,6 +653,8 @@ function ZoneMount_DisplayHelp()
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
+  ChatFrame1:AddMessage(msg)
 end
 
 function ZoneMount_IsAlreadyMounted(mount_name)
@@ -840,6 +844,13 @@ function ZoneMount_ListMountTypes()
   end
 end
 
+function ZoneMount_DoSpecial()
+  local editbox=ChatEdit_ChooseBoxForSend(DEFAULT_CHAT_FRAME);--  Get an editbox
+  ChatEdit_ActivateChat(editbox);--   Show the editbox
+  editbox:SetText("/mountspecial");-- Command goes here
+  ChatEdit_OnEnterPressed(editbox);-- Process command and hide (runs ChatEdit_SendText() and ChatEdit_DeactivateChat() respectively)
+end
+
 function ZoneMount_Tests()
   C_MountJournal.SetAllSourceFilters(true)
   C_MountJournal.SetCollectedFilterSetting(1, true)
@@ -861,14 +872,13 @@ function ZoneMount_Tests()
   end
 end
 
-
 function ZoneMount_addInterfaceOptions()
   local y = -16
-  ZonePet.panel = CreateFrame("Frame", "ZonemountPanel", UIParent )
-  ZonePet.panel.name = "ZoneMount"
-  InterfaceOptions_AddCategory(ZonePet.panel)
+  ZoneMount.panel = CreateFrame("Frame", "ZonemountPanel", UIParent )
+  ZoneMount.panel.name = "ZoneMount"
+  InterfaceOptions_AddCategory(ZoneMount.panel)
 
-  local Title = ZonePet.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+  local Title = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
   Title:SetJustifyV('TOP')
   Title:SetJustifyH('LEFT')
   Title:SetPoint('TOPLEFT', 16, y)
@@ -876,7 +886,7 @@ function ZoneMount_addInterfaceOptions()
   Title:SetText('ZoneMount v' .. v)
   y = y - 44
 
-  local btnFT = CreateFrame("CheckButton", nil, ZonePet.panel, "UICheckButtonTemplate")
+  local btnFT = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
 	btnFT:SetSize(26,26)
 	btnFT:SetHitRectInsets(-2,-200,-2,-2)
 	btnFT.text:SetText('  Show mount info in Chat')
@@ -889,7 +899,7 @@ function ZoneMount_addInterfaceOptions()
   end)
   y = y - 40
 
-  local btn2 = CreateFrame("CheckButton", nil, ZonePet.panel, "UICheckButtonTemplate")
+  local btn2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
 	btn2:SetSize(26,26)
 	btn2:SetHitRectInsets(-2,-200,-2,-2)
 	btn2.text:SetText('  Select from Favorites only')

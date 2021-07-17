@@ -31,11 +31,12 @@ Slash Commands:
 - /zm about - show info about your current mount.
 - /zm __name__ - search for a mount by name (searching is case-insensitive and will find partial matches).
 - /zm macro - create a macro for easy use of Zone Mount.  
-
+- /zm do - make your mount do its special action if it is on the ground.
 
 Version History:
 ===============
 
+v 1.1.1: Added /zm do command to perform special action (only works on the ground), fixed interface options bug.
 v 1.1.0: Fix for riding now available in The Maw for all mounts. Added options to hide mount info in chat and to use favorites only. Set using Game Menu > Interface > AddOns > ZoneMount.
 v 1.0.10: Included Bound Shadehound for mounting in the Maw.
 v 1.0.9: Updated for Patch 9.0.5.
