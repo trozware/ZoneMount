@@ -41,7 +41,8 @@ function ZoneMount:Initialize()
   if not zoneMountSettings then
 		zoneMountSettings = {
       favsOnly = false,
-      hideInfo = false
+      hideInfo = false,
+      hideWarnings = false
 		}
   end
 
@@ -144,9 +145,11 @@ function ZoneMount_MountOrDismount()
       if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
         Dismount()
       else
-        local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
-        formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
-        ChatFrame1:AddMessage(formatted_msg)
+        if not zoneMountSettings.hideWarnings then
+          local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
+          formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
+          ChatFrame1:AddMessage(formatted_msg)
+        end
 
         ZoneMount_LastDismountCommand = now
       end
@@ -163,7 +166,9 @@ end
 function ZoneMount_LookForMount()
   local badReason = ZoneMount_ShouldLookForNewMount() 
   if badReason ~= 'yes' then
-    ZoneMount_DisplayMessage('Not a good time right now... ' .. badReason, true)
+    if not zoneMountSettings.hideWarnings then
+      ZoneMount_DisplayMessage('Not a good time right now... ' .. badReason, true)
+    end
     return
   end
 
@@ -179,7 +184,9 @@ function ZoneMount_LookForMount()
 
   -- print('Looking for ', mount_type, 'mount')
   if mount_type == 'none' then
-    ZoneMount_DisplayMessage('Not a good place right now...', true)
+    if not zoneMountSettings.hideWarnings then
+      ZoneMount_DisplayMessage('Not a good place right now...', true)
+    end
     return
   end
 
@@ -187,11 +194,14 @@ function ZoneMount_LookForMount()
   local valid_mounts = ZoneMount_ValidMounts()
   -- print('Number of valid mounts = ', #valid_mounts)
   if #valid_mounts == 0 then
-    ZoneMount_DisplayMessage(ZoneMount_FailReason(), true)
+    if not zoneMountSettings.hideWarnings then
+      ZoneMount_DisplayMessage(ZoneMount_FailReason(), true)
+    end
     return
   end
 
   local zone_mounts = {}
+  local special_mounts = {}
   local type_mounts = {}
   local secondary_zone_mounts = {}
   local secondary_type_mounts = {}
@@ -204,6 +214,11 @@ function ZoneMount_LookForMount()
       = C_MountJournal.GetMountInfoExtraByID(mount_id)
 
     if ZoneMount_RightMountType(mount_type, mountTypeID) then
+      -- print('==================')
+      -- print(valid_mounts[n].name, mountTypeID)
+      -- print(description)
+      -- print(matchingZoneName)
+  
         type_mounts[#type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
             description = description, source = '' }
 
@@ -211,11 +226,19 @@ function ZoneMount_LookForMount()
         if matchingZoneName ~= '' then
           zone_mounts[#zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
             description = description, source = matchingZoneName }
-
-          -- print(valid_mounts[n].name, mountTypeID)
-          -- -- print(description)
-          -- print(matchingZoneName)
-          -- print('==================')
+        else
+          validZone = false
+          if source then 
+            if string.find(source, 'Game') then
+              validZone = true
+            elseif string.find(source, 'Promotion') then
+              validZone = true
+            end
+          end
+          if validZone then
+            special_mounts[#special_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+            description = description, source = '' }
+          end
         end
       else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID) then
         secondary_type_mounts[#secondary_type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
@@ -239,13 +262,18 @@ function ZoneMount_LookForMount()
             'Zone 2: ' .. #secondary_zone_mounts .. '\n'
     end
   end
-
+  
   -- print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
   -- print('Number of zone mounts = ', #zone_mounts)
-
+  
   -- if secondary_mount_type ~= '' then
   --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
   --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
+  -- end
+  
+  -- print('Number of special mounts = ', #special_mounts)
+  -- for n = 1, #special_mounts do
+  --   print(special_mounts[n].name, special_mounts[n].source)
   -- end
 
   if #zone_mounts == 0 then
@@ -260,6 +288,28 @@ function ZoneMount_LookForMount()
   if #type_mounts == 0 then
     type_mounts = secondary_type_mounts
   end
+
+  -- print('Number of zone mounts = ', #zone_mounts)
+  -- print('Number of special mounts = ', #special_mounts)
+
+  if #special_mounts > 0 then
+    local special_index = math.random(#special_mounts)
+    zone_mounts[#zone_mounts + 1] = special_mounts[special_index]
+  end
+
+  -- if #zone_mounts / 2 >= #special_mounts then
+  --   for n = 1, #special_mounts do
+  --     zone_mounts[#zone_mounts + 1] = special_mounts[n]
+  --   end
+  -- else
+  --   local total_required = #zone_mounts * 1.5
+  --   local mount_index
+  --   repeat
+  --     mount_index = math.random(#special_mounts)
+  --     zone_mounts[#zone_mounts + 1] = special_mounts[mount_index]
+  --   until #zone_mounts == total_required
+  -- end
+  -- print('Number of zone mounts = ', #zone_mounts)
 
   local mount_index, name, id, description, source
 
@@ -565,7 +615,9 @@ end
 
 function ZoneMount_SearchForMount(search_name)
   if ZoneMount_ShouldLookForNewMount() == 'no' then
-    ZoneMount_DisplayMessage('Not a good time right now...', true)
+    if not zoneMountSettings.hideWarnings then
+      ZoneMount_DisplayMessage('Not a good time right now...', true)
+    end
     return
   end
 
@@ -626,7 +678,9 @@ function ZoneMount_SearchForMount(search_name)
 
   if matching_id ~= nil then
     if ZoneMount_IsAlreadyMounted(matching_name) then
-      ZoneMount_DisplayMessage('Already riding ' .. matching_name, true)
+      if not zoneMountSettings.hideWarnings then
+        ZoneMount_DisplayMessage('Already riding ' .. matching_name, true)
+      end
     else
       local description = ZoneMount_DescriptionForMount(matching_id)
       ZoneMount_DisplaySummonMessage(matching_name, '', description)
@@ -866,8 +920,14 @@ function ZoneMount_Tests()
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-      if creatureName == 'Mawsworn Soulhunter' or creatureName == 'Corridor Creeper'  or creatureName == 'Bound Shadehound' then
-        print(creatureName, mountID)
+      if creatureName == 'Squeakers, the Trickster' or creatureName == 'Wandering Ancient' then
+        local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+        uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+        = C_MountJournal.GetMountInfoExtraByID(mountID)
+
+        print('Name', creatureName)
+        print('Source type', sourceType)
+        print('Source', source)
       end
   end
 end
@@ -896,6 +956,19 @@ function ZoneMount_addInterfaceOptions()
   btnFT:SetScript("OnClick",function() 
     local isChecked = btnFT:GetChecked()
     zoneMountSettings.hideInfo = not isChecked
+  end)
+  y = y - 40
+
+  local btnWarn = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	btnWarn:SetSize(26,26)
+	btnWarn:SetHitRectInsets(-2,-200,-2,-2)
+	btnWarn.text:SetText('  Show warnings in Chat')
+	btnWarn.text:SetFontObject("GameFontNormal")
+  btnWarn:SetPoint('TOPLEFT', 40, y)
+  btnWarn:SetChecked(not zoneMountSettings.hideWarnings)
+  btnWarn:SetScript("OnClick",function() 
+    local isChecked = btnWarn:GetChecked()
+    zoneMountSettings.hideWarnings = not isChecked
   end)
   y = y - 40
 

@@ -48,6 +48,7 @@ Check out my iPhone app [WoW Stats](https://itunes.apple.com/app/wow-stats/id136
 
 ### Version History
 
+- v 1.1.3: Special mounts summoned more often, added option to turn off warnings in chat.
 - v 1.1.2: Updated for Patch 9.1.5.
 - v 1.1.1: Added /zm do command to perform special action (only works on the ground), fixed interface options bug.
 - v 1.1.0: Fix for riding now available in The Maw for all mounts. Added options to hide mount info in chat and to use favorites only. Set using Game Menu > Interface > AddOns > ZoneMount.
