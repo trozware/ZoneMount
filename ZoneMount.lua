@@ -431,11 +431,21 @@ function ZoneMount_PrintShape()
   end
 end
 
-function ZoneMount_ValidMounts()
+function ZoneMount_clearFilters()
+  C_MountJournal.SetAllTypeFilters(true)
   C_MountJournal.SetAllSourceFilters(true)
+  C_MountJournal.SetSearch('')
+
+  -- 1 = LE_MOUNT_JOURNAL_FILTER_COLLECTED	
+  -- 2 = LE_MOUNT_JOURNAL_FILTER_NOT_COLLECTED	
+  -- 3 =LE_MOUNT_JOURNAL_FILTER_UNUSABLE
   C_MountJournal.SetCollectedFilterSetting(1, true)
   C_MountJournal.SetCollectedFilterSetting(2, false)
-  C_MountJournal.SetSearch('')
+  C_MountJournal.SetCollectedFilterSetting(3, false)
+end
+
+function ZoneMount_ValidMounts()
+  ZoneMount_clearFilters()
 
   local playerLevel = UnitLevel("player")
   local inMaw = ZoneMount_InTheMaw()
@@ -447,10 +457,27 @@ function ZoneMount_ValidMounts()
   local chauffeur_mounts = {}
   local maw_mounts = {}
 
+  local englishFaction, localizedFaction = UnitFactionGroup('player')
+
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
+
+    if mountID == 125 then
+      -- Riding Turtle, too slow
+      isUsable = false
+    end
+
+    -- isFactionSpecific - true if the mount is only available to one faction, false otherwise.
+    -- faction - 0 if the mount is available only to Horde players, 1 if the mount is available only to Alliance players, or nil if the mount is not faction-specific.
+    if isFactionSpecific then
+      if englishFaction == 'Alliance' and faction == 0 then
+        isUsable = false
+      elseif englishFaction == 'Horde' and faction == 1 then
+        isUsable = false
+      end
+    end
 
     if zoneMountSettings.favsOnly == false or isFavorite == true then
       if isCollected and (mountID == 1304 or mountID == 1441 or mountID == 1442) then
@@ -469,7 +496,7 @@ function ZoneMount_ValidMounts()
     valid_mounts = maw_mounts
   end
 
-  -- don't use chauffered mount if 10 or higher as it is slower, unless htere are no other options
+  -- don't use chauffered mount if 10 or higher as it is slower, unless there are no other options
   if #valid_mounts == 0 and not inMaw then
     valid_mounts = chauffeur_mounts
   end
@@ -626,10 +653,7 @@ function ZoneMount_SearchForMount(search_name)
   local goodMatch = {}
   local fairMatch = {}
 
-  C_MountJournal.SetAllSourceFilters(true)
-  C_MountJournal.SetCollectedFilterSetting(1, true)
-  C_MountJournal.SetCollectedFilterSetting(2, false)
-  C_MountJournal.SetSearch('')
+  ZoneMount_clearFilters()
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
@@ -749,10 +773,7 @@ function ZoneMount_CurrentMount()
 end
 
 function ZoneMount_ListMountNames()
-  C_MountJournal.SetAllSourceFilters(true)
-  C_MountJournal.SetCollectedFilterSetting(1, true)
-  C_MountJournal.SetCollectedFilterSetting(2, false)
-  C_MountJournal.SetSearch('')
+  ZoneMount_clearFilters()
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
@@ -776,7 +797,7 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/cancelform\n/zm mount", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/cancelform\n/zm mount\n# delete cancelform line to stop form change on summon", nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -791,7 +812,7 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/cancelform\n/zm mount", nil, nil)
+      EditMacro(macroIndex, "ZoneMount", "136103", "/cancelform\n/zm mount\n# delete cancelform line to stop form change on summon", nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end
@@ -872,10 +893,9 @@ function ZoneMount_IsUnderwater()
 end
 
 function ZoneMount_ListMountTypes()
-  C_MountJournal.SetAllSourceFilters(true)
-  C_MountJournal.SetCollectedFilterSetting(1, true)
-  C_MountJournal.SetCollectedFilterSetting(2, false)
-  C_MountJournal.SetSearch('')
+  ZoneMount_clearFilters()
+  C_MountJournal.SetCollectedFilterSetting(2, true)
+  C_MountJournal.SetCollectedFilterSetting(3, true)
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
   print('Number of mounts = ', num_mounts)
@@ -906,12 +926,9 @@ function ZoneMount_DoSpecial()
 end
 
 function ZoneMount_Tests()
-  C_MountJournal.SetAllSourceFilters(true)
-  C_MountJournal.SetCollectedFilterSetting(1, true)
+  ZoneMount_clearFilters()
   C_MountJournal.SetCollectedFilterSetting(2, true)
   C_MountJournal.SetCollectedFilterSetting(3, true)
-
-  C_MountJournal.SetSearch('')
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
@@ -920,15 +937,18 @@ function ZoneMount_Tests()
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-      if creatureName == 'Squeakers, the Trickster' or creatureName == 'Wandering Ancient' then
-        local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-        uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-        = C_MountJournal.GetMountInfoExtraByID(mountID)
+    if creatureName == 'Riding Turtle' or creatureName == "Chauffeured Mekgineer's Chopper"  or creatureName == "Chauffeured Mechano-Hog" then
+      local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+      uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+      = C_MountJournal.GetMountInfoExtraByID(mountID)
 
-        print('Name', creatureName)
-        print('Source type', sourceType)
-        print('Source', source)
-      end
+      print('Name', creatureName)
+      print('ID', mountID)
+      print('Source type', sourceType)
+      print('Source', source)
+      print('Faction specific', isFactionSpecific)
+      print('Faction', faction)
+    end
   end
 end
 

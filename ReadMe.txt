@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.1.5: Better search. Will not summon slow Riding Turtle.
 v 1.1.4: Updated for Patch 9.2.0.
 v 1.1.3: Special mounts summoned more often, added option to turn off warnings in chat.
 v 1.1.2: Updated for Patch 9.1.5.
