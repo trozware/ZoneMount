@@ -48,6 +48,7 @@ Check out my iPhone app [WoW Stats](https://itunes.apple.com/app/wow-stats/id136
 
 ### Version History
 
+- v 1.1.6: Updated for 10.0. Will not summon slow Unsuccessful Prototype Fleetpod.
 - v 1.1.5: Better search. Will not summon slow Riding Turtle.
 - v 1.1.4: Updated for Patch 9.2.0.
 - v 1.1.3: Special mounts summoned more often, added option to turn off warnings in chat.

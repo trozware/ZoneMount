@@ -464,8 +464,8 @@ function ZoneMount_ValidMounts()
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if mountID == 125 then
-      -- Riding Turtle, too slow
+    if mountID == 125 or mountID == 1539 then
+      -- Riding Turtle or Unsuccessful Prototype Fleetpod, too slow
       isUsable = false
     end
 
@@ -648,7 +648,7 @@ function ZoneMount_SearchForMount(search_name)
     return
   end
 
-  local mount_name = strlower(search_name)
+  local mount_name = string.lower(search_name)
   local totalMatch = nil
   local goodMatch = {}
   local fairMatch = {}
@@ -664,12 +664,12 @@ function ZoneMount_SearchForMount(search_name)
       C_MountJournal.GetDisplayedMountInfo(n)
 
     if isUsable and isCollected then
-      if strlower(creatureName) == mount_name then
+      if string.lower(creatureName) == mount_name then
         totalMatch = { name = creatureName, ID = mountID }
         break
       else
-        local strLocation1 = strfind(strlower(creatureName), mount_name)
-        local strLocation2 = strfind(strlower(creatureName), ' ' .. mount_name)
+        local strLocation1 = string.find(string.lower(creatureName), mount_name)
+        local strLocation2 = string.find(string.lower(creatureName), ' ' .. mount_name)
         if strLocation1 == 1 or strLocation2 ~= nil then
           goodMatch[#goodMatch + 1] = { name = creatureName, ID = mountID }
         elseif strLocation1 ~= nil then
@@ -937,7 +937,7 @@ function ZoneMount_Tests()
       isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if creatureName == 'Riding Turtle' or creatureName == "Chauffeured Mekgineer's Chopper"  or creatureName == "Chauffeured Mechano-Hog" then
+    if creatureName == 'Unsuccessful Prototype Fleetpod' or creatureName == "Chauffeured Mekgineer's Chopper" or creatureName == "Chauffeured Mechano-Hog" then
       local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
       = C_MountJournal.GetMountInfoExtraByID(mountID)
