@@ -1,7 +1,7 @@
 ## Title: Zone Mount
-## Interface: 100000
+## Interface: 100002
 ## Author: Sarah Reichelt
-## Version: 1.1.6
+## Version: 1.1.7
 
 
 ## SavedVariables: zoneMountSettings
