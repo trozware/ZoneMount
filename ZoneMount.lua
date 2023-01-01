@@ -182,7 +182,7 @@ function ZoneMount_LookForMount()
     end
   end
 
-  print('Looking for ', mount_type, 'mount')
+  -- print('Looking for ', mount_type, 'mount')
   if mount_type == 'none' then
     if not zoneMountSettings.hideWarnings then
       ZoneMount_DisplayMessage('Not a good place right now...', true)
@@ -266,13 +266,13 @@ function ZoneMount_LookForMount()
     end
   end
   
-  print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
-  print('Number of zone mounts = ', #zone_mounts)
+  -- print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
+  -- print('Number of zone mounts = ', #zone_mounts)
   
-  if secondary_mount_type ~= '' then
-    print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
-    print('Number of secondary zone mounts = ', #secondary_zone_mounts)
-  end
+  -- if secondary_mount_type ~= '' then
+  --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
+  --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
+  -- end
   
   -- print('Number of special mounts = ', #special_mounts)
   -- for n = 1, #special_mounts do
@@ -648,7 +648,7 @@ end
 
 function ZoneMount_InDragonIsles()
   local zone = GetZoneText()
-  print(zone)
+  -- print(zone)
   if zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
     or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' then
     return true
