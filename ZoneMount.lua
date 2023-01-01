@@ -174,7 +174,7 @@ function ZoneMount_LookForMount()
 
   local mount_type = ZoneMount_TypeOfMountToSummon()
   local secondary_mount_type = ''
-  if mount_type == 'water' then
+  if mount_type == 'water' or mount_type == 'dragon' then
     if IsFlyableArea() and UnitLevel("player") >= 30 then
       secondary_mount_type = 'flying'
     else
@@ -182,7 +182,7 @@ function ZoneMount_LookForMount()
     end
   end
 
-  -- print('Looking for ', mount_type, 'mount')
+  print('Looking for ', mount_type, 'mount')
   if mount_type == 'none' then
     if not zoneMountSettings.hideWarnings then
       ZoneMount_DisplayMessage('Not a good place right now...', true)
@@ -212,8 +212,11 @@ function ZoneMount_LookForMount()
     local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
       = C_MountJournal.GetMountInfoExtraByID(mount_id)
+    local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific,  
+      faction, shouldHideOnChar, isCollected, mountID, isForDragonriding
+      = C_MountJournal.GetMountInfoByID(mount_id)
 
-    if ZoneMount_RightMountType(mount_type, mountTypeID) then
+    if ZoneMount_RightMountType(mount_type, mountTypeID, isForDragonriding) then
       -- print('==================')
       -- print(valid_mounts[n].name, mountTypeID)
       -- print(description)
@@ -240,7 +243,7 @@ function ZoneMount_LookForMount()
             description = description, source = '' }
           end
         end
-      else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID) then
+      else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID, isForDragonriding) then
         secondary_type_mounts[#secondary_type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
             description = description, source = '' }
 
@@ -263,13 +266,13 @@ function ZoneMount_LookForMount()
     end
   end
   
-  -- print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
-  -- print('Number of zone mounts = ', #zone_mounts)
+  print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
+  print('Number of zone mounts = ', #zone_mounts)
   
-  -- if secondary_mount_type ~= '' then
-  --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
-  --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
-  -- end
+  if secondary_mount_type ~= '' then
+    print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
+    print('Number of secondary zone mounts = ', #secondary_zone_mounts)
+  end
   
   -- print('Number of special mounts = ', #special_mounts)
   -- for n = 1, #special_mounts do
@@ -313,7 +316,7 @@ function ZoneMount_LookForMount()
 
   local mount_index, name, id, description, source
 
-  if #zone_mounts == 1 and #type_mounts > 1 then
+  if mount_type ~= 'dragon' and #zone_mounts == 1 and #type_mounts > 1 then
     -- add in at least one other valid mount if possible
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
@@ -461,7 +464,7 @@ function ZoneMount_ValidMounts()
 
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
     if mountID == 125 or mountID == 1539 then
@@ -519,7 +522,6 @@ function ZoneMount_FailReason()
 end
 
 function ZoneMount_TypeOfMountToSummon()
-  --  TODO: IsFlyableArea returns false in Draenor where you can now fly
   if IsIndoors() then
     return 'none'
   elseif IsSubmerged() or IsSwimming() then
@@ -528,6 +530,8 @@ function ZoneMount_TypeOfMountToSummon()
     return 'flying'
   elseif ZoneMount_InDraenor() and UnitLevel("player") >= 30 then
     return 'flying'
+  elseif ZoneMount_InDragonIsles() then
+    return 'dragon'
   else
     return 'ground'
   end
@@ -571,8 +575,10 @@ function ZoneMount_ShouldLookForNewMount()
   return 'yes'
 end
 
-function ZoneMount_RightMountType(required_type, type_id)
-  if required_type == 'water' then
+function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
+  if required_type == 'dragon' and isForDragonriding then
+    return true
+  elseif required_type == 'water' then
     if type_id == 231 then
       -- turtles work on land or water
       return true
@@ -631,9 +637,20 @@ end
 
 function ZoneMount_InDraenor()
   local zone = GetZoneText()  
-  if zone == 'Shadowmoon Valley' or zone == 'Frostfore Ridge' or zone == 'Ashran'
+  if zone == 'Shadowmoon Valley' or zone == 'Frostfire Ridge' or zone == 'Ashran'
     or zone == 'Gorgrond' or zone == 'Nagrand' or zone == 'Spires of Arak' or zone == 'Talador' 
     or zone == 'Tanaan Jungle' or zone == 'Lunarfall' or zone == 'Frostwall' then
+    return true
+  else
+    return false
+  end
+end
+
+function ZoneMount_InDragonIsles()
+  local zone = GetZoneText()
+  print(zone)
+  if zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
+    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' then
     return true
   else
     return false
@@ -934,10 +951,10 @@ function ZoneMount_Tests()
 
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if creatureName == 'Unsuccessful Prototype Fleetpod' or creatureName == "Chauffeured Mekgineer's Chopper" or creatureName == "Chauffeured Mechano-Hog" then
+    if creatureName == 'Highland Drake' then
       local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
       = C_MountJournal.GetMountInfoExtraByID(mountID)
@@ -948,6 +965,7 @@ function ZoneMount_Tests()
       print('Source', source)
       print('Faction specific', isFactionSpecific)
       print('Faction', faction)
+      print('isForDragonriding', isForDragonriding)
     end
   end
 end

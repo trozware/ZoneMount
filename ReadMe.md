@@ -42,12 +42,11 @@ Use Game Menu > Interface > AddOns > ZoneMount to set whether you want the mount
 
 **Zone Mount** is a companion add-on to **ZonePet** which you can also get from [CurseForge](https://wow.curseforge.com/projects/zonepet). While the two add-ons are similar, they are completely independent so you do not have to install both (although I hope you will).
 
-Check out my iPhone app [WoW Stats](https://itunes.apple.com/app/wow-stats/id1364247768) for quick access to suggested talent builds and stat priorities.
-
 ---
 
 ### Version History
 
+- v 1.2.0: Summons dragonriding mounts in Dragon Isles.
 - v 1.1.7: Updated for 10.0.2.
 - v 1.1.6: Updated for 10.0. Will not summon slow Unsuccessful Prototype Fleetpod.
 - v 1.1.5: Better search. Will not summon slow Riding Turtle.

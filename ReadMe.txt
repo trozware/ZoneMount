@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.2.0: Summons dragonriding mounts in Dragon Isles.
 v 1.1.7: Updated for 10.0.2.
 v 1.1.6: Updated for 10.0. Will not summon slow Unsuccessful Prototype Fleetpod.
 v 1.1.5: Better search. Will not summon slow Riding Turtle.
