@@ -649,8 +649,8 @@ end
 function ZoneMount_InDragonIsles()
   local zone = GetZoneText()
   -- print(zone)
-  if zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
-    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' then
+  if zone == 'Valdraken' or zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
+    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' then
     return true
   else
     return false
