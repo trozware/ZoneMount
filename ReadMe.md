@@ -46,6 +46,7 @@ Use Game Menu > Interface > AddOns > ZoneMount to set whether you want the mount
 
 ### Version History
 
+- v 1.2.3: Fix for dragonriding mounts in Valdrakken. Updated for 10.0.5.
 - v 1.2.2: Supports dragonriding mounts in more areas of the Dragon Isles.
 - v 1.2.1: Summons dragonriding mounts in Dragon Isles.
 - v 1.1.7: Updated for 10.0.2.
