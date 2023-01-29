@@ -19,6 +19,7 @@ local ZoneMount_LastSummon = nil
 local ZoneMount_DebugMode = false
 local ZoneMount_LastDismountCommand = nil
 local ZoneMount_HasMacroInstalled = false
+local ZoneMount_LastChatReport = 0
 
 ZoneMount_EventFrame:SetScript("OnEvent",
   function(self, event, ...)
@@ -42,6 +43,7 @@ function ZoneMount:Initialize()
 		zoneMountSettings = {
       favsOnly = false,
       hideInfo = false,
+      slowInfo = false,
       hideWarnings = false
 		}
   end
@@ -106,6 +108,12 @@ function ZoneMount_DisplaySummonMessage(name, zone, description)
     return
   end
 
+  local now = GetTime()           -- time in seconds
+  if zoneMountSettings.slowInfo and now - ZoneMount_LastChatReport < 180 then
+    return
+  end
+  ZoneMount_LastChatReport = now
+  
   local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFSummoning " .. "|c00FFD100" .. name
   if zone and zone ~= '' then
     msg = msg .. "|c0000FFFF from " .. zone.. "."
@@ -985,6 +993,8 @@ function ZoneMount_addInterfaceOptions()
   y = y - 44
 
   local btnFT = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  local btnSlow = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+
 	btnFT:SetSize(26,26)
 	btnFT:SetHitRectInsets(-2,-200,-2,-2)
 	btnFT.text:SetText('  Show mount info in Chat')
@@ -994,6 +1004,30 @@ function ZoneMount_addInterfaceOptions()
   btnFT:SetScript("OnClick",function() 
     local isChecked = btnFT:GetChecked()
     zoneMountSettings.hideInfo = not isChecked
+    btnSlow:SetEnabled(not zoneMountSettings.hideInfo)
+    if zoneMountSettings.hideInfo then
+      btnSlow.text:SetFontObject("GameFontDisable")
+    else
+      btnSlow.text:SetFontObject("GameFontNormal")
+    end
+  end)
+  y = y - 40
+
+  btnSlow:SetSize(26,26)
+	btnSlow:SetHitRectInsets(-2,-200,-2,-2)
+	btnSlow.text:SetText('  Not more than once every 3 minutes')
+  btnSlow:SetPoint('TOPLEFT', 80, y)
+  btnSlow:SetChecked(zoneMountSettings.slowInfo)
+  btnSlow:SetEnabled(not zoneMountSettings.hideInfo)
+  if zoneMountSettings.hideInfo then
+    btnSlow.text:SetFontObject("GameFontDisable")
+  else
+    btnSlow.text:SetFontObject("GameFontNormal")
+  end
+  btnSlow:SetScript("OnClick",function() 
+    local isChecked = btnSlow:GetChecked()
+    zoneMountSettings.slowInfo = isChecked
+    ZoneMount_LastChatReport = 0
   end)
   y = y - 40
 

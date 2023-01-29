@@ -28,7 +28,7 @@ If you really do want to plummet out of the sky, click the macro button twice in
 
 Read the mount's name and description in the Chat. These descriptions can be very funny - yet another way we are missing out on some good content.
 
-Use Game Menu > Interface > AddOns > ZoneMount to set whether you want the mount info to appear in the chat and to make **Zone Mount** choose from your favorite mounts only.
+Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat and to make **Zone Mount** choose from your favorite mounts only.
 
 ### Slash Commands
 
@@ -46,6 +46,7 @@ Use Game Menu > Interface > AddOns > ZoneMount to set whether you want the mount
 
 ### Version History
 
+- v 1.2.5: Added an option to show info in chat log less often.
 - v 1.2.4: Bug fix.
 - v 1.2.3: Fix for dragonriding mounts in Valdrakken. Updated for 10.0.5.
 - v 1.2.2: Supports dragonriding mounts in more areas of the Dragon Isles.

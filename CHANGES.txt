@@ -1,3 +1,4 @@
+- v 1.2.5: Added an option to show info in chat log less often.
 - v 1.2.4: Bug fix.
 - v 1.2.3: Fix for dragonriding mounts in Valdrakken. Updated for 10.0.5.
 - v 1.2.2: Supports dragonriding mounts in more areas of the Dragon Isles.
