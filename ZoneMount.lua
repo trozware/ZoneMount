@@ -646,11 +646,6 @@ function ZoneMount_InDraenor()
   end
 end
 
-/*
-/run print(ZoneMount_InDragonIsles())
-/run print(GetZoneText())
-*/
-
 function ZoneMount_InDragonIsles()
   local zone = GetZoneText()
   -- print(zone)
