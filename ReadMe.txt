@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.2.7: Updated for 10.1.0.
 v 1.2.6: Updated for 10.0.7.
 v 1.2.5: Added an option to show info in chat log less often.
 v 1.2.4: Bug fix.
