@@ -658,7 +658,7 @@ function ZoneMount_InDragonIsles()
   local zone = GetZoneText()
   -- print(zone)
   if zone == 'Valdrakken' or zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
-    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' then
+    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' or zone  == 'Zaralek Cavern' then
     return true
   else
     return false
