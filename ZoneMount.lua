@@ -532,14 +532,16 @@ end
 function ZoneMount_TypeOfMountToSummon()
   if IsIndoors() then
     return 'none'
-  elseif IsSubmerged() or IsSwimming() then
+  elseif ZoneMount_IsUnderwater() then
     return 'water'
+  elseif ZoneMount_InDragonIsles() then
+    return 'dragon'
   elseif IsFlyableArea() and UnitLevel("player") >= 30 then
     return 'flying'
   elseif ZoneMount_InDraenor() and UnitLevel("player") >= 30 then
     return 'flying'
-  elseif ZoneMount_InDragonIsles() then
-    return 'dragon'
+  elseif IsSubmerged() or IsSwimming() then
+    return 'water'
   else
     return 'ground'
   end
@@ -590,7 +592,7 @@ function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
     if type_id == 231 then
       -- turtles work on land or water
       return true
-    elseif type_id == 254 and ZoneMount_IsUnderwater() then
+    elseif type_id == 254 and (ZoneMount_IsUnderwater() or (ZoneMount_InVashjir() and IsSubmerged())) then
       -- call underwater mounts only if breath is running out i.e. underwater
       return true
     elseif type_id == 232 and ZoneMount_InVashjir() == true then
@@ -822,7 +824,7 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/cancelform\n/zm mount\n# delete cancelform line to stop form change on summon", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/zm mount", nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -837,7 +839,7 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/cancelform\n/zm mount\n# delete cancelform line to stop form change on summon", nil, nil)
+      EditMacro(macroIndex, "ZoneMount", "136103", "/zm mount", nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end
@@ -1055,5 +1057,33 @@ function ZoneMount_addInterfaceOptions()
     local isChecked = btn2:GetChecked()
     zoneMountSettings.favsOnly = isChecked
   end)
+  y = y - 60
+
+  local druidInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  druidInfo1:SetJustifyV('TOP')
+  druidInfo1:SetJustifyH('LEFT')
+  druidInfo1:SetPoint('TOPLEFT', 40, y)
+  druidInfo1:SetText('If you are a druid and want ZoneMount to revert')
+  y = y - 16
+
+  local druidInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  druidInfo2:SetJustifyV('TOP')
+  druidInfo2:SetJustifyH('LEFT')
+  druidInfo2:SetPoint('TOPLEFT', 40, y)
+  druidInfo2:SetText('to your basic form so you can mount automatically,')
+  y = y - 16
+
+  local druidInfo3 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  druidInfo3:SetJustifyV('TOP')
+  druidInfo3:SetJustifyH('LEFT')
+  druidInfo3:SetPoint('TOPLEFT', 40, y)
+  druidInfo3:SetText('insert the following line at the start of your ZoneMount macro:')
+  y = y - 24
+
+  local druidInfo4 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  druidInfo4:SetJustifyV('TOP')
+  druidInfo4:SetJustifyH('LEFT')
+  druidInfo4:SetPoint('TOPLEFT', 100, y)
+  druidInfo4:SetText('/cancelform')
   y = y - 40
 end

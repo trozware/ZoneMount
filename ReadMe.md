@@ -46,6 +46,7 @@ Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you wa
 
 ### Version History
 
+- v 1.2.9: Updated for 10.1.5. Better water handling in Vashj'ir and Dragon Isles.
 - v 1.2.8: Allows for flying in Zaralek Cavern.
 - v 1.2.7: Updated for 10.1.0.
 - v 1.2.6: Updated for 10.0.7.
