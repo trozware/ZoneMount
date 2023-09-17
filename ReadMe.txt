@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.2.10: Updated for 10.1.7.
 v 1.2.9: Updated for 10.1.5. Better water handling in Vashj'ir and Dragon Isles.
 v 1.2.8: Allows for flying in Zaralek Cavern.
 v 1.2.7: Updated for 10.1.0.
