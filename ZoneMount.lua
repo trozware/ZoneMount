@@ -181,13 +181,13 @@ function ZoneMount_LookForMount()
   end
 
   local mount_type = ZoneMount_TypeOfMountToSummon()
-  local secondary_mount_type = ''
-  if mount_type == 'water' or mount_type == 'dragon' then
-    if IsFlyableArea() and UnitLevel("player") >= 30 then
+  local secondary_mount_type = 'ground'
+  if mount_type == 'dragon' then
+    secondary_mount_type = 'dragon'
+  else
+    if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 30 then
       secondary_mount_type = 'flying'
-    else
-      secondary_mount_type = 'ground'
-    end
+    end 
   end
 
   -- print('Looking for ', mount_type, 'mount')
@@ -324,7 +324,8 @@ function ZoneMount_LookForMount()
 
   local mount_index, name, id, description, source
 
-  if mount_type ~= 'dragon' and #zone_mounts == 1 and #type_mounts > 1 then
+  -- if mount_type ~= 'dragon' and #zone_mounts == 1 and #type_mounts > 1 then
+  if #zone_mounts == 1 and #type_mounts > 1 then
     -- add in at least one other valid mount if possible
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
@@ -534,7 +535,7 @@ function ZoneMount_TypeOfMountToSummon()
     return 'none'
   elseif ZoneMount_IsUnderwater() then
     return 'water'
-  elseif ZoneMount_InDragonIsles() then
+  elseif ZoneMount_CanDragonFly() then
     return 'dragon'
   elseif IsFlyableArea() and UnitLevel("player") >= 30 then
     return 'flying'
@@ -660,10 +661,28 @@ function ZoneMount_InDragonIsles()
   local zone = GetZoneText()
   -- print(zone)
   if zone == 'Valdrakken' or zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
-    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' or zone  == 'Zaralek Cavern' then
+    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' 
+    or zone  == 'Zaralek Cavern' or zone == 'Emerald Dream' then
     return true
   else
     return false
+  end
+end
+
+-- /run print(ZoneMount_CanDragonFly())
+function ZoneMount_CanDragonFly()
+  ZoneMount_clearFilters()
+  C_MountJournal.SetAllTypeFilters(false)
+  C_MountJournal.SetTypeFilter(4, true)
+
+  local num_dragon_mounts = C_MountJournal.GetNumDisplayedMounts()
+  if num_dragon_mounts == 0 then
+    return false
+  else
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+    isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
+    C_MountJournal.GetDisplayedMountInfo(1)
+    return isUsable and isCollected and isForDragonriding
   end
 end
 

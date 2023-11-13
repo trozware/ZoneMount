@@ -46,6 +46,7 @@ Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you wa
 
 ### Version History
 
+- v 1.3.0: Allow for dragon flying in Emerald Dream. If you want to use a standard flying mount in Dragon Isles, summon it manually.
 - v 1.2.11: Updated for 10.2.0.
 - v 1.2.10: Updated for 10.1.7.
 - v 1.2.9: Updated for 10.1.5. Better water handling in Vashj'ir and Dragon Isles.
