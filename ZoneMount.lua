@@ -214,6 +214,10 @@ function ZoneMount_LookForMount()
   local secondary_zone_mounts = {}
   local secondary_type_mounts = {}
   local zone_names = ZoneMount_ZoneNames()
+  -- print('Zone names:')
+  -- for n = 1, #zone_names do
+  --   print(zone_names[n])
+  -- end
 
   for n = 1, #valid_mounts do
     local mount_id = valid_mounts[n].ID
@@ -590,8 +594,9 @@ function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
   if required_type == 'dragon' and isForDragonriding then
     return true
   elseif required_type == 'water' then
-    if type_id == 231 then
+    if type_id == 231 or type == 407 then
       -- turtles work on land or water
+      -- 407s work in water & flying
       return true
     elseif type_id == 254 and (ZoneMount_IsUnderwater() or (ZoneMount_InVashjir() and IsSubmerged())) then
       -- call underwater mounts only if breath is running out i.e. underwater
@@ -603,14 +608,14 @@ function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
       return false
     end
   elseif required_type == 'flying' then
-    if type_id == 247 or type_id == 248 or type_id == 254 or type_id == 398 then
+    if type_id == 247 or type_id == 248 or type_id == 398 or type_id == 407 or type_id == 424 then
       return true
     else
       return false
     end
   elseif required_type == 'ground' then
     if type_id == 230 or type_id == 231 or type_id == 241 or type_id == 269 
-      or type_id == 284 then
+      or type_id == 284 or type_id == 408 or type_id == 412 then
       return true
     else
       return false
@@ -919,6 +924,18 @@ function ZoneMount_SourceInValidZone(source, zones)
       return zones[n]
     end
   end
+
+  -- for n = 1, #zones do
+  --   -- split the zone name into words and check each one
+  --   local words = {}
+  --   for word in string.gmatch(zones[n], '([^%s]+)') do
+  --     if #word > 3 and string.find(source, word) then
+  --       return zones[n]
+  --     end
+  --   end
+  -- end
+
+  -- print(source)
   return ''
 end
 
@@ -938,6 +955,8 @@ function ZoneMount_IsUnderwater()
   return false
 end
 
+-- /run ZoneMount_ListMountTypes()
+
 function ZoneMount_ListMountTypes()
   ZoneMount_clearFilters()
   C_MountJournal.SetCollectedFilterSetting(2, true)
@@ -946,16 +965,28 @@ function ZoneMount_ListMountTypes()
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
   print('Number of mounts = ', num_mounts)
 
+  local smallTypes = { 398, 231, 254, 232, 284, 241, 407, 242, 247 }
   local types = {}
+
   for n = 1, num_mounts do
-    creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
+      C_MountJournal.GetDisplayedMountInfo(n)
+
+    local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-      = C_MountJournal.GetDisplayedMountInfoExtra(n)
+      = C_MountJournal.GetMountInfoExtraByID(mountID)
 
     if types[mountTypeID] then
       types[mountTypeID] = types[mountTypeID] + 1
     else
       types[mountTypeID] = 1
+    end
+
+
+    if mountTypeID == 398 or mountTypeID == 231  or mountTypeID == 254 or mountTypeID == 232 or mountTypeID == 284 
+      or mountTypeID == 241 or mountTypeID == 407 or mountTypeID == 242 or mountTypeID == 247 then
+      print(mountTypeID, creatureName)
     end
   end
 
@@ -978,23 +1009,42 @@ function ZoneMount_Tests()
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
+  local valid_mounts = ZoneMount_ValidMounts()
+  print('Number of valid mounts = ', #valid_mounts)
+
   for n = 1, num_mounts do
     local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
       isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
       C_MountJournal.GetDisplayedMountInfo(n)
 
-    if creatureName == 'Highland Drake' then
+    if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
       local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
       uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
       = C_MountJournal.GetMountInfoExtraByID(mountID)
 
       print('Name', creatureName)
       print('ID', mountID)
-      print('Source type', sourceType)
-      print('Source', source)
-      print('Faction specific', isFactionSpecific)
-      print('Faction', faction)
+      print('Type', mountTypeID)
+      -- print('Source type', sourceType)
+      -- print('Source', source)
+      -- print('Faction specific', isFactionSpecific)
+      -- print('Faction', faction)
       print('isForDragonriding', isForDragonriding)
+
+      -- local zone_names = ZoneMount_ZoneNames()
+      -- print('Zone names:')
+      -- for n = 1, #zone_names do
+      --   print(zone_names[n])
+      -- end
+
+      -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+      -- for n = 1, #zone_names do
+      --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
+      --     print('Found source in "' .. zone_names[n] .. '"')
+      --   else
+      --     print('Not found in "' .. zone_names[n] .. '"')
+      --   end
+      -- -- end
     end
   end
 end
@@ -1106,3 +1156,4 @@ function ZoneMount_addInterfaceOptions()
   druidInfo4:SetText('/cancelform')
   y = y - 40
 end
+
