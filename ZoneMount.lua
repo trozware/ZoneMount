@@ -1,5 +1,7 @@
 -- ISSUES
 ---------
+
+-- if selecting dragon flyer with favs only and there are no favs, over-ride the setting
 -- detect underwater breathing - warlock buff, potions, quest items
 
 -- /dump GetMacroInfo('ZoneMount') => gets ID of selected icon
@@ -282,13 +284,13 @@ function ZoneMount_LookForMount()
   -- print('Number of zone mounts = ', #zone_mounts)
   
   -- if secondary_mount_type ~= '' then
-  --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
-  --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
+    --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
+    --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
   -- end
   
   -- print('Number of special mounts = ', #special_mounts)
   -- for n = 1, #special_mounts do
-  --   print(special_mounts[n].name, special_mounts[n].source)
+    --   print(special_mounts[n].name, special_mounts[n].source)
   -- end
 
   if #zone_mounts == 0 then
@@ -591,7 +593,7 @@ function ZoneMount_ShouldLookForNewMount()
 end
 
 function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
-  if required_type == 'dragon' and isForDragonriding then
+  if required_type == 'dragon' and (isForDragonriding or type_id == 402) then
     return true
   elseif required_type == 'water' then
     if type_id == 231 or type == 407 then
@@ -871,7 +873,10 @@ end
 
 function ZoneMount_ZoneNames()
   local map_id = C_Map.GetBestMapForUnit('player')
-  local info = C_Map.GetMapInfo(map_id)
+  local info = nil
+  if map_id then 
+    info = C_Map.GetMapInfo(map_id)
+  end
   local zone_names = {}
 
   zone_names[#zone_names + 1] = GetZoneText()
@@ -965,7 +970,6 @@ function ZoneMount_ListMountTypes()
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
   print('Number of mounts = ', num_mounts)
 
-  local smallTypes = { 398, 231, 254, 232, 284, 241, 407, 242, 247 }
   local types = {}
 
   for n = 1, num_mounts do
