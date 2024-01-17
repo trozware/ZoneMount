@@ -46,8 +46,17 @@ function ZoneMount:Initialize()
       favsOnly = false,
       hideInfo = false,
       slowInfo = false,
-      hideWarnings = false
+      hideWarnings = false,
+      dragonIslesDefaultDragon = true,
+      otherPlacesDefaultNonDragon = true
 		}
+  end
+
+  if zoneMountSettings.dragonIslesDefaultDragon == nil then
+    zoneMountSettings.dragonIslesDefaultDragon = true
+  end
+  if zoneMountSettings.otherPlacesDefaultNonDragon == nil then
+    zoneMountSettings.otherPlacesDefaultNonDragon = true
   end
 
   ZoneMount_addInterfaceOptions()
@@ -537,11 +546,29 @@ function ZoneMount_FailReason()
 end
 
 function ZoneMount_TypeOfMountToSummon()
+  local shouldUseDragon = false
+
+  if ZoneMount_InDragonIsles() then
+    if zoneMountSettings.dragonIslesDefaultDragon and IsModifierKeyDown() == false then
+      shouldUseDragon = true
+    elseif zoneMountSettings.dragonIslesDefaultDragon == false and IsModifierKeyDown() then
+      shouldUseDragon = true
+    end
+  else
+    if zoneMountSettings.otherPlacesDefaultNonDragon and IsModifierKeyDown() == false then
+      shouldUseDragon = false
+    elseif zoneMountSettings.otherPlacesDefaultNonDragon == false and IsModifierKeyDown() then
+      shouldUseDragon = false
+    elseif UnitLevel("player") >= 30 then
+      shouldUseDragon = true
+    end
+  end
+
   if IsIndoors() then
     return 'none'
   elseif ZoneMount_IsUnderwater() then
     return 'water'
-  elseif ZoneMount_CanDragonFly() then
+  elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
     return 'dragon'
   elseif IsFlyableArea() and UnitLevel("player") >= 30 then
     return 'flying'
@@ -665,18 +692,15 @@ function ZoneMount_InDraenor()
 end
 
 function ZoneMount_InDragonIsles()
-  local zone = GetZoneText()
-  -- print(zone)
-  if zone == 'Valdrakken' or zone == "Ohn'ahran Plains" or zone == 'Thaldraszus' or zone == 'The Azure Span'
-    or zone == 'The Forbidden Reach' or zone == 'The Waking Shores' or zone == 'The Primalist Future' 
-    or zone  == 'Zaralek Cavern' or zone == 'Emerald Dream' then
-    return true
-  else
-    return false
+  local zone_names = ZoneMount_ZoneNames()
+  for n = 1, #zone_names do
+    if zone_names[n] == 'Dragon Isles' then
+      return true
+    end
   end
+  return false
 end
 
--- /run print(ZoneMount_CanDragonFly())
 function ZoneMount_CanDragonFly()
   ZoneMount_clearFilters()
   C_MountJournal.SetAllTypeFilters(false)
@@ -899,7 +923,7 @@ function ZoneMount_ZoneNames()
 
   local previous_map_id = map_id
 
-  while (info and info.mapType and info.mapType < 3) do
+  while (info and info.mapType and info.mapType >= 3) do
     map_id = info.parentMapID
     info = C_Map.GetMapInfo(map_id)
 
@@ -1130,6 +1154,47 @@ function ZoneMount_addInterfaceOptions()
     local isChecked = btn2:GetChecked()
     zoneMountSettings.favsOnly = isChecked
   end)
+  y = y - 60
+
+  local btnDI = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	btnDI:SetSize(26,26)
+	btnDI:SetHitRectInsets(-2,-200,-2,-2)
+	btnDI.text:SetText('  Call a dragon by default in Dragon Isles')
+	btnDI.text:SetFontObject("GameFontNormal")
+  btnDI:SetPoint('TOPLEFT', 40, y)
+  btnDI:SetChecked(zoneMountSettings.dragonIslesDefaultDragon)
+  btnDI:SetScript("OnClick",function() 
+    local isChecked = btnDI:GetChecked()
+    zoneMountSettings.dragonIslesDefaultDragon = isChecked
+  end)
+  y = y - 24
+
+  local dragonInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+  dragonInfo1:SetJustifyV('TOP')
+  dragonInfo1:SetJustifyH('LEFT')
+  dragonInfo1:SetPoint('TOPLEFT', 100, y)
+  dragonInfo1:SetText('If this is on, press Shift, Alt or Ctrl to call a non-dragon')
+  y = y - 40
+
+  local btnOther = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	btnOther:SetSize(26,26)
+	btnOther:SetHitRectInsets(-2,-200,-2,-2)
+	btnOther.text:SetText('  Call a non-dragon by default outside the Dragon Isles')
+	btnOther.text:SetFontObject("GameFontNormal")
+  btnOther:SetPoint('TOPLEFT', 40, y)
+  btnOther:SetChecked(zoneMountSettings.otherPlacesDefaultNonDragon)
+  btnOther:SetScript("OnClick",function() 
+    local isChecked = btnOther:GetChecked()
+    zoneMountSettings.otherPlacesDefaultNonDragon = isChecked
+  end)
+  y = y - 24
+
+  local dragonInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
+  dragonInfo2:SetJustifyV('TOP')
+  dragonInfo2:SetJustifyH('LEFT')
+  dragonInfo2:SetPoint('TOPLEFT', 100, y)
+  dragonInfo2:SetText('If this is on, press Shift, Alt or Ctrl to call a dragon')
+
   y = y - 60
 
   local druidInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')

@@ -30,6 +30,8 @@ Read the mount's name and description in the Chat. These descriptions can be ver
 
 Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat and to make **Zone Mount** choose from your favorite mounts only.
 
+By default, dragonriding mounts will be called in Dragon Isles but not outside them. Hold down a modifier key (Shift, Ctrl or Alt) while clicking the macro button to call the other type. You can change the default behavior in Game Menu > Options > AddOns > ZoneMount.
+
 ### Slash Commands
 
 - /zm mount - mount or dismount.
@@ -46,6 +48,7 @@ Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you wa
 
 ### Version History
 
+- v 1.4.0: Updated for 10.2.5. Use modifier key to toggle dragonriding mounts in and out of Dragon Isles.
 - v 1.3.2: Summons ground mounts in Millennia's Threshold.
 - v 1.3.1: Fix for not assigning zones to some flying mounts.
 - v 1.3.0: Allow for dragon flying in Emerald Dream. If you want to use a standard flying mount in Dragon Isles, summon it manually.
