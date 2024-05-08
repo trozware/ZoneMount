@@ -1,3 +1,4 @@
+- v 1.4.2: Updated for 10.2.7.
 - v 1.4.1: Updated for 10.2.6.
 - v 1.4.0: Updated for 10.2.5. Use modifier key to toggle dragonriding mounts in and out of Dragon Isles.
 - v 1.3.2: Summons ground mounts in Millennia's Threshold.
