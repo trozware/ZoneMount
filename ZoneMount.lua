@@ -559,7 +559,7 @@ function ZoneMount_TypeOfMountToSummon()
       shouldUseDragon = false
     elseif zoneMountSettings.otherPlacesDefaultNonDragon == false and IsModifierKeyDown() then
       shouldUseDragon = false
-    elseif UnitLevel("player") >= 30 then
+    elseif UnitLevel("player") >= 30 or ZoneMount_IsInRemix() then
       shouldUseDragon = true
     end
   end
@@ -570,7 +570,7 @@ function ZoneMount_TypeOfMountToSummon()
     return 'water'
   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
     return 'dragon'
-  elseif IsFlyableArea() and UnitLevel("player") >= 30 then
+  elseif IsFlyableArea() and (UnitLevel("player") >= 30 or ZoneMount_IsInRemix()) then
     return 'flying'
   elseif ZoneMount_InDraenor() and UnitLevel("player") >= 30 then
     return 'flying'
@@ -692,6 +692,10 @@ function ZoneMount_InDraenor()
 end
 
 function ZoneMount_InDragonIsles()
+  if ZoneMount_IsInRemix() then
+    return true
+  end
+
   local zone_names = ZoneMount_ZoneNames()
   for n = 1, #zone_names do
     if zone_names[n] == 'Dragon Isles' then
@@ -1031,51 +1035,68 @@ function ZoneMount_DoSpecial()
 end
 
 function ZoneMount_Tests()
-  ZoneMount_clearFilters()
-  C_MountJournal.SetCollectedFilterSetting(2, true)
-  C_MountJournal.SetCollectedFilterSetting(3, true)
 
-  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
-  local valid_mounts = ZoneMount_ValidMounts()
-  print('Number of valid mounts = ', #valid_mounts)
+  -- ZoneMount_clearFilters()
+  -- C_MountJournal.SetCollectedFilterSetting(2, true)
+  -- C_MountJournal.SetCollectedFilterSetting(3, true)
 
-  for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
-      C_MountJournal.GetDisplayedMountInfo(n)
+  -- local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
-    if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
-      local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-      uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-      = C_MountJournal.GetMountInfoExtraByID(mountID)
+  -- local valid_mounts = ZoneMount_ValidMounts()
+  -- print('Number of valid mounts = ', #valid_mounts)
 
-      print('Name', creatureName)
-      print('ID', mountID)
-      print('Type', mountTypeID)
-      -- print('Source type', sourceType)
-      -- print('Source', source)
-      -- print('Faction specific', isFactionSpecific)
-      -- print('Faction', faction)
-      print('isForDragonriding', isForDragonriding)
+  -- for n = 1, num_mounts do
+  --   local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+  --     isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
+  --     C_MountJournal.GetDisplayedMountInfo(n)
 
-      -- local zone_names = ZoneMount_ZoneNames()
-      -- print('Zone names:')
-      -- for n = 1, #zone_names do
-      --   print(zone_names[n])
-      -- end
+  --   if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
+  --     local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+  --     uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+  --     = C_MountJournal.GetMountInfoExtraByID(mountID)
 
-      -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-      -- for n = 1, #zone_names do
-      --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
-      --     print('Found source in "' .. zone_names[n] .. '"')
-      --   else
-      --     print('Not found in "' .. zone_names[n] .. '"')
-      --   end
-      -- -- end
+  --     print('Name', creatureName)
+  --     print('ID', mountID)
+  --     print('Type', mountTypeID)
+  --     -- print('Source type', sourceType)
+  --     -- print('Source', source)
+  --     -- print('Faction specific', isFactionSpecific)
+  --     -- print('Faction', faction)
+  --     print('isForDragonriding', isForDragonriding)
+
+  --     -- local zone_names = ZoneMount_ZoneNames()
+  --     -- print('Zone names:')
+  --     -- for n = 1, #zone_names do
+  --     --   print(zone_names[n])
+  --     -- end
+
+  --     -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+  --     -- for n = 1, #zone_names do
+  --     --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
+  --     --     print('Found source in "' .. zone_names[n] .. '"')
+  --     --   else
+  --     --     print('Not found in "' .. zone_names[n] .. '"')
+  --     --   end
+  --     -- -- end
+  --   end
+  -- end
+end
+
+function ZoneMount_IsInRemix()
+  for i = 1, 50 do 
+    local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal,
+      spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura('player', i )
+    if name and spellId then
+      if name.find(name, 'Remix') or spellId == 424143 then
+        return true
+      end
+    else
+      return false
     end
   end
 end
+
 
 function ZoneMount_addInterfaceOptions()
   local y = -16
