@@ -232,48 +232,50 @@ function ZoneMount_LookForMount()
 
   for n = 1, #valid_mounts do
     local mount_id = valid_mounts[n].ID
-    local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-      uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-      = C_MountJournal.GetMountInfoExtraByID(mount_id)
-    local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific,  
-      faction, shouldHideOnChar, isCollected, mountID, isForDragonriding
-      = C_MountJournal.GetMountInfoByID(mount_id)
+    if mount_id and mount_id ~= '' then
+      local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+        uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+        = C_MountJournal.GetMountInfoExtraByID(mount_id)
+      local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific,  
+        faction, shouldHideOnChar, isCollected, mountID, isForDragonriding
+        = C_MountJournal.GetMountInfoByID(mount_id)
 
-    if ZoneMount_RightMountType(mount_type, mountTypeID, isForDragonriding) then
-      -- print('==================')
-      -- print(valid_mounts[n].name, mountTypeID)
-      -- print(description)
-      -- print(matchingZoneName)
-  
-        type_mounts[#type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
+      if ZoneMount_RightMountType(mount_type, mountTypeID, isForDragonriding) then
+        -- print('==================')
+        -- print(valid_mounts[n].name, mountTypeID)
+        -- print(description)
+        -- print(matchingZoneName)
+    
+          type_mounts[#type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+              description = description, source = '' }
 
-        local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-        if matchingZoneName ~= '' then
-          zone_mounts[#zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = matchingZoneName }
-        else
-          validZone = false
-          if source then 
-            if string.find(source, 'Game') then
-              validZone = true
-            elseif string.find(source, 'Promotion') then
-              validZone = true
+          local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+          if matchingZoneName ~= '' then
+            zone_mounts[#zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+              description = description, source = matchingZoneName }
+          else
+            validZone = false
+            if source then 
+              if string.find(source, 'Game') then
+                validZone = true
+              elseif string.find(source, 'Promotion') then
+                validZone = true
+              end
+            end
+            if validZone then
+              special_mounts[#special_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+              description = description, source = '' }
             end
           end
-          if validZone then
-            special_mounts[#special_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
-          end
-        end
-      else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID, isForDragonriding) then
-        secondary_type_mounts[#secondary_type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
+        else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID, isForDragonriding) then
+          secondary_type_mounts[#secondary_type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+              description = description, source = '' }
 
-        local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-        if matchingZoneName ~= '' then
-          secondary_zone_mounts[#secondary_zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = matchingZoneName }
+          local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+          if matchingZoneName ~= '' then
+            secondary_zone_mounts[#secondary_zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
+              description = description, source = matchingZoneName }
+          end
         end
       end
     end

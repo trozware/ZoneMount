@@ -48,6 +48,7 @@ By default, dragonriding mounts will be called in Dragon Isles but not outside t
 
 ### Version History
 
+- v 1.5.1: Attempt to fix a reported bug.
 - v 1.5.0: Allows for dragon riding in Pandaria Remix. Shift-click ZoneMount macro for normal flyer.
 - v 1.4.2: Updated for 10.2.7.
 - v 1.4.1: Updated for 10.2.6.
