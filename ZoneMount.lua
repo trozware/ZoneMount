@@ -814,6 +814,8 @@ function ZoneMount_DisplayHelp()
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Shift, Alt or Ctrl while clicking the macro to toggle skyriding."
+  ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
   ChatFrame1:AddMessage(msg)
 end
@@ -880,7 +882,7 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/zm mount", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/cast [mod] Switch Flight Style\n/zm mount", nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -895,7 +897,7 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/zm mount", nil, nil)
+      EditMacro(macroIndex, "ZoneMount", "136103", "/cast [mod] Switch Flight Style\n/zm mount", nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end
@@ -1037,52 +1039,57 @@ function ZoneMount_DoSpecial()
 end
 
 function ZoneMount_Tests()
+  ZoneMount_clearFilters()
+  C_MountJournal.SetCollectedFilterSetting(2, true)
+  C_MountJournal.SetCollectedFilterSetting(3, true)
 
+  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
-  -- ZoneMount_clearFilters()
-  -- C_MountJournal.SetCollectedFilterSetting(2, true)
-  -- C_MountJournal.SetCollectedFilterSetting(3, true)
+  local valid_mounts = ZoneMount_ValidMounts()
+  print('Number of valid mounts = ', #valid_mounts)
 
-  -- local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+  for n = 1, num_mounts do
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
+      C_MountJournal.GetDisplayedMountInfo(n)
 
-  -- local valid_mounts = ZoneMount_ValidMounts()
-  -- print('Number of valid mounts = ', #valid_mounts)
+      if isForDragonriding == true then
+        print('Name', creatureName)
+        print('ID', mountID)
+        print('Type', mountTypeID)
+        print('isForDragonriding', isForDragonriding)
+      end
 
-  -- for n = 1, num_mounts do
-  --   local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-  --     isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
-  --     C_MountJournal.GetDisplayedMountInfo(n)
+    -- if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
+    --   local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+    --   uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+    --   = C_MountJournal.GetMountInfoExtraByID(mountID)
 
-  --   if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
-  --     local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-  --     uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-  --     = C_MountJournal.GetMountInfoExtraByID(mountID)
+    --   print('Name', creatureName)
+    --   print('ID', mountID)
+    --   print('Type', mountTypeID)
+      -- print('Source type', sourceType)
+      -- print('Source', source)
+      -- print('Faction specific', isFactionSpecific)
+      -- print('Faction', faction)
+      -- print('isForDragonriding', isForDragonriding)
 
-  --     print('Name', creatureName)
-  --     print('ID', mountID)
-  --     print('Type', mountTypeID)
-  --     -- print('Source type', sourceType)
-  --     -- print('Source', source)
-  --     -- print('Faction specific', isFactionSpecific)
-  --     -- print('Faction', faction)
-  --     print('isForDragonriding', isForDragonriding)
+      -- local zone_names = ZoneMount_ZoneNames()
+      -- print('Zone names:')
+      -- for n = 1, #zone_names do
+      --   print(zone_names[n])
+      -- end
 
-  --     -- local zone_names = ZoneMount_ZoneNames()
-  --     -- print('Zone names:')
-  --     -- for n = 1, #zone_names do
-  --     --   print(zone_names[n])
-  --     -- end
-
-  --     -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-  --     -- for n = 1, #zone_names do
-  --     --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
-  --     --     print('Found source in "' .. zone_names[n] .. '"')
-  --     --   else
-  --     --     print('Not found in "' .. zone_names[n] .. '"')
-  --     --   end
-  --     -- -- end
-  --   end
-  -- end
+      -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+      -- for n = 1, #zone_names do
+      --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
+      --     print('Found source in "' .. zone_names[n] .. '"')
+      --   else
+      --     print('Not found in "' .. zone_names[n] .. '"')
+      --   end
+      -- -- end
+    -- end
+  end
 end
 
 function ZoneMount_IsInRemix()
@@ -1099,12 +1106,16 @@ function ZoneMount_IsInRemix()
   end
 end
 
-
 function ZoneMount_addInterfaceOptions()
   local y = -16
   ZoneMount.panel = CreateFrame("Frame", "ZonemountPanel", UIParent )
   ZoneMount.panel.name = "ZoneMount"
-  InterfaceOptions_AddCategory(ZoneMount.panel)
+  
+    -- InterfaceOptions_AddCategory(ZoneMount.panel)
+  
+  local category, layout = Settings.RegisterCanvasLayoutCategory(ZoneMount.panel, ZoneMount.panel.name, ZoneMount.panel.name)
+  category.ID = ZoneMount.panel.name
+  Settings.RegisterAddOnCategory(category)
 
   local Title = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
   Title:SetJustifyV('TOP')
@@ -1179,45 +1190,11 @@ function ZoneMount_addInterfaceOptions()
   end)
   y = y - 60
 
-  local btnDI = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-	btnDI:SetSize(26,26)
-	btnDI:SetHitRectInsets(-2,-200,-2,-2)
-	btnDI.text:SetText('  Call a dragon by default in Dragon Isles')
-	btnDI.text:SetFontObject("GameFontNormal")
-  btnDI:SetPoint('TOPLEFT', 40, y)
-  btnDI:SetChecked(zoneMountSettings.dragonIslesDefaultDragon)
-  btnDI:SetScript("OnClick",function() 
-    local isChecked = btnDI:GetChecked()
-    zoneMountSettings.dragonIslesDefaultDragon = isChecked
-  end)
-  y = y - 24
-
-  local dragonInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
-  dragonInfo1:SetJustifyV('TOP')
-  dragonInfo1:SetJustifyH('LEFT')
-  dragonInfo1:SetPoint('TOPLEFT', 100, y)
-  dragonInfo1:SetText('If this is on, press Shift, Alt or Ctrl to call a non-dragon')
-  y = y - 40
-
-  local btnOther = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-	btnOther:SetSize(26,26)
-	btnOther:SetHitRectInsets(-2,-200,-2,-2)
-	btnOther.text:SetText('  Call a non-dragon by default outside the Dragon Isles')
-	btnOther.text:SetFontObject("GameFontNormal")
-  btnOther:SetPoint('TOPLEFT', 40, y)
-  btnOther:SetChecked(zoneMountSettings.otherPlacesDefaultNonDragon)
-  btnOther:SetScript("OnClick",function() 
-    local isChecked = btnOther:GetChecked()
-    zoneMountSettings.otherPlacesDefaultNonDragon = isChecked
-  end)
-  y = y - 24
-
-  local dragonInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalSmall')
-  dragonInfo2:SetJustifyV('TOP')
-  dragonInfo2:SetJustifyH('LEFT')
-  dragonInfo2:SetPoint('TOPLEFT', 100, y)
-  dragonInfo2:SetText('If this is on, press Shift, Alt or Ctrl to call a dragon')
-
+  local shiftInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  shiftInfo1:SetJustifyV('TOP')
+  shiftInfo1:SetJustifyH('LEFT')
+  shiftInfo1:SetPoint('TOPLEFT', 40, y)
+  shiftInfo1:SetText('Hold down Shift, Alt or Ctrl while clicking the macro button to toggle skyriding.')
   y = y - 60
 
   local druidInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
