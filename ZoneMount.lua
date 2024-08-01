@@ -18,6 +18,8 @@ ZoneMount_EventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
 ZoneMount_EventFrame:RegisterEvent("PLAYER_LOGIN")
 
 local ZoneMount_LastSummon = nil
+local ZoneMount_LastSummonTime = 0
+local ZoneMount_LastSummonName = ''
 local ZoneMount_DebugMode = false
 local ZoneMount_LastDismountCommand = nil
 local ZoneMount_HasMacroInstalled = false
@@ -115,6 +117,8 @@ function ZoneMount_DisplayMessage(msg, format)
 end
 
 function ZoneMount_DisplaySummonMessage(name, zone, description)
+  ZoneMount_LastSummonName = name
+
   if zoneMountSettings.hideInfo then
     return
   end
@@ -155,10 +159,21 @@ function ZoneMount_DisplayInfo()
 end
 
 function ZoneMount_MountOrDismount() 
+  local now = GetTime()           -- time in seconds
+  local timelimit = 1.6
+  if IsMounted() then
+    timelimit = 0.16
+  end
+  if now - ZoneMount_LastSummonTime < timelimit then
+    return
+  end
+  ZoneMount_LastSummonTime = now
+
   if IsMounted() then
     if not IsFlying() then
       Dismount()
       ZoneMount_LastDismountCommand = nil
+      ZoneMount_LastSummonTime = now - 2
     elseif ZoneMount_HasMacroInstalled then
       local now = GetTime()           -- time in seconds
       if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
@@ -186,7 +201,9 @@ function ZoneMount_LookForMount()
   local badReason = ZoneMount_ShouldLookForNewMount() 
   if badReason ~= 'yes' then
     if not zoneMountSettings.hideWarnings then
-      ZoneMount_DisplayMessage('Not a good time right now... ' .. badReason, true)
+      if badReason ~= 'You are casting ' .. ZoneMount_LastSummonName then
+        ZoneMount_DisplayMessage('Not a good time right now... ' .. badReason, true)
+      end
     end
     return
   end
@@ -497,6 +514,14 @@ function ZoneMount_ValidMounts()
       -- Riding Turtle or Unsuccessful Prototype Fleetpod, too slow
       isUsable = false
     end
+    if mountID == 2039 then
+      -- Savage Blue Battle Turtle too slow except in water
+      if ZoneMount_IsUnderwater() or IsSubmerged() or IsSwimming() then
+        isUsable = true
+      else
+        isUsable = false
+      end
+    end
 
     -- isFactionSpecific - true if the mount is only available to one faction, false otherwise.
     -- faction - 0 if the mount is available only to Horde players, 1 if the mount is available only to Alliance players, or nil if the mount is not faction-specific.
@@ -547,6 +572,7 @@ function ZoneMount_FailReason()
   end
 end
 
+-- /run print(ZoneMount_TypeOfMountToSummon())
 function ZoneMount_TypeOfMountToSummon()
   local shouldUseDragon = false
 
@@ -570,6 +596,12 @@ function ZoneMount_TypeOfMountToSummon()
     return 'none'
   elseif ZoneMount_IsUnderwater() then
     return 'water'
+  elseif UnitLevel("player") >= 10 and UnitLevel("player") < 30 then
+    if IsModifierKeyDown() then
+      return 'ground'
+    else
+      return 'flying'
+    end
   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
     return 'dragon'
   elseif IsFlyableArea() and (UnitLevel("player") >= 30 or ZoneMount_IsInRemix()) then
@@ -645,7 +677,9 @@ function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
       return false
     end
   elseif required_type == 'ground' then
-    if type_id == 230 or type_id == 231 or type_id == 241 or type_id == 269 
+    -- don't summon Savage Blue Battle Turtle (231) if not in water
+
+    if type_id == 230 or type_id == 241 or type_id == 269 
       or type_id == 284 or type_id == 408 or type_id == 412 then
       return true
     else
@@ -1039,57 +1073,89 @@ function ZoneMount_DoSpecial()
 end
 
 function ZoneMount_Tests()
-  ZoneMount_clearFilters()
-  C_MountJournal.SetCollectedFilterSetting(2, true)
-  C_MountJournal.SetCollectedFilterSetting(3, true)
+  -- ZoneMount_clearFilters()
+  -- C_MountJournal.SetCollectedFilterSetting(2, true)
+  -- C_MountJournal.SetCollectedFilterSetting(3, true)
 
-  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+  -- local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
-  local valid_mounts = ZoneMount_ValidMounts()
-  print('Number of valid mounts = ', #valid_mounts)
+  -- local valid_mounts = ZoneMount_ValidMounts()
+  -- print('Number of valid mounts = ', #valid_mounts)
 
-  for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
-      C_MountJournal.GetDisplayedMountInfo(n)
+  -- for n = 1, num_mounts do
+  --   local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+  --     isFactionSpecific, faction, hideOnChar, isCollected, mountID, isForDragonriding = 
+  --     C_MountJournal.GetDisplayedMountInfo(n)
+  --     -- if isForDragonriding == true then
+  --     --   print('Name', creatureName)
+  --     --   print('ID', mountID)
+  --     --   print('Type', mountTypeID)
+  --     --   print('isForDragonriding', isForDragonriding)
+  --     -- end
 
-      if isForDragonriding == true then
-        print('Name', creatureName)
-        print('ID', mountID)
-        print('Type', mountTypeID)
-        print('isForDragonriding', isForDragonriding)
-      end
+  --   -- if creatureName == 'Savage Blue Battle Turtle' then
+  --   local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+  --   uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+  --   = C_MountJournal.GetMountInfoExtraByID(mountID)
+    
+  --   if mountTypeID == 231 then
+  --     print('Name', creatureName)
+  --     print('ID', mountID)
+  --     print('Type', mountTypeID)
+  --     print('Source type', sourceType)
+  --     print('Source', source)
+  --     print('Faction specific', isFactionSpecific)
+  --     print('Faction', faction)
+  --       print('isForDragonriding', isForDragonriding)
+  --       print('isForDragonriding', isForDragonriding)
+  --     end
 
-    -- if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
-    --   local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-    --   uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-    --   = C_MountJournal.GetMountInfoExtraByID(mountID)
+  --   -- if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
+  --   --   local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+  --   --   uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+  --   --   = C_MountJournal.GetMountInfoExtraByID(mountID)
 
-    --   print('Name', creatureName)
-    --   print('ID', mountID)
-    --   print('Type', mountTypeID)
-      -- print('Source type', sourceType)
-      -- print('Source', source)
-      -- print('Faction specific', isFactionSpecific)
-      -- print('Faction', faction)
-      -- print('isForDragonriding', isForDragonriding)
+  --   --   print('Name', creatureName)
+  --   --   print('ID', mountID)
+  --   --   print('Type', mountTypeID)
+  --     -- print('Source type', sourceType)
+  --     -- print('Source', source)
+  --     -- print('Faction specific', isFactionSpecific)
+  --     -- print('Faction', faction)
+  --     -- print('isForDragonriding', isForDragonriding)
+  --     print('isForDragonriding', isForDragonriding)
+  --     end
 
-      -- local zone_names = ZoneMount_ZoneNames()
-      -- print('Zone names:')
-      -- for n = 1, #zone_names do
-      --   print(zone_names[n])
-      -- end
+  --   -- if creatureName == 'Ebon Gryphon' or creatureName == 'Highland Drake' then
+  --   --   local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
+  --   --   uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
+  --   --   = C_MountJournal.GetMountInfoExtraByID(mountID)
 
-      -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-      -- for n = 1, #zone_names do
-      --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
-      --     print('Found source in "' .. zone_names[n] .. '"')
-      --   else
-      --     print('Not found in "' .. zone_names[n] .. '"')
-      --   end
-      -- -- end
-    -- end
-  end
+  --   --   print('Name', creatureName)
+  --   --   print('ID', mountID)
+  --   --   print('Type', mountTypeID)
+  --     -- print('Source type', sourceType)
+  --     -- print('Source', source)
+  --     -- print('Faction specific', isFactionSpecific)
+  --     -- print('Faction', faction)
+  --     -- print('isForDragonriding', isForDragonriding)
+
+  --     -- local zone_names = ZoneMount_ZoneNames()
+  --     -- print('Zone names:')
+  --     -- for n = 1, #zone_names do
+  --     --   print(zone_names[n])
+  --     -- end
+
+  --     -- -- local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+  --     -- for n = 1, #zone_names do
+  --     --   if zone_names[n] ~= '' and string.find(source, zone_names[n]) then
+  --     --     print('Found source in "' .. zone_names[n] .. '"')
+  --     --   else
+  --     --     print('Not found in "' .. zone_names[n] .. '"')
+  --     --   end
+  --     end
+  --   end
+  -- end
 end
 
 function ZoneMount_IsInRemix()
@@ -1195,7 +1261,21 @@ function ZoneMount_addInterfaceOptions()
   shiftInfo1:SetJustifyH('LEFT')
   shiftInfo1:SetPoint('TOPLEFT', 40, y)
   shiftInfo1:SetText('Hold down Shift, Alt or Ctrl while clicking the macro button to toggle skyriding.')
-  y = y - 60
+  y = y - 16
+
+  local shiftInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  shiftInfo2:SetJustifyV('TOP')
+  shiftInfo2:SetJustifyH('LEFT')
+  shiftInfo2:SetPoint('TOPLEFT', 40, y)
+  shiftInfo2:SetText('If your level is 10 - 29, you can skyride but not steady fly.')
+  y = y - 16
+
+  local shiftInfo3 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  shiftInfo3:SetJustifyV('TOP')
+  shiftInfo3:SetJustifyH('LEFT')
+  shiftInfo3:SetPoint('TOPLEFT', 40, y)
+  shiftInfo3:SetText('For these levels, use Shift, Alt or Ctrl to summon a ground mount.')
+  y = y - 50
 
   local druidInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   druidInfo1:SetJustifyV('TOP')
@@ -1225,4 +1305,3 @@ function ZoneMount_addInterfaceOptions()
   druidInfo4:SetText('/cancelform')
   y = y - 40
 end
-
