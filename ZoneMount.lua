@@ -1165,7 +1165,7 @@ end
 function ZoneMount_IsInRemix()
   for i = 1, 50 do 
     local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal,
-      spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura('player', i )
+      spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = C_UnitAuras.GetAuraDataByIndex('player', i)
     if name and spellId then
       if name.find(name, 'Remix') or spellId == 424143 then
         return true
