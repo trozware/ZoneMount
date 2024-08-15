@@ -102,7 +102,7 @@ function ZoneMount_ToggleDebugMode()
 end
 
 function ZoneMount_ShowWelcome()
-  local v = GetAddOnMetadata("ZoneMount", "Version") 
+  local v = C_AddOns.GetAddOnMetadata("ZoneMount", "Version") 
   local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm help |c0000FFFFfor help."
   ZoneMount_DisplayMessage(msg, false)
 end
@@ -587,7 +587,7 @@ function ZoneMount_TypeOfMountToSummon()
       shouldUseDragon = false
     elseif zoneMountSettings.otherPlacesDefaultNonDragon == false and IsModifierKeyDown() then
       shouldUseDragon = false
-    elseif UnitLevel("player") >= 30 or ZoneMount_IsInRemix() then
+    elseif UnitLevel("player") >= 10 or ZoneMount_IsInRemix() then
       shouldUseDragon = true
     end
   end
@@ -604,9 +604,9 @@ function ZoneMount_TypeOfMountToSummon()
     end
   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
     return 'dragon'
-  elseif IsFlyableArea() and (UnitLevel("player") >= 30 or ZoneMount_IsInRemix()) then
+  elseif IsFlyableArea() and (UnitLevel("player") >= 10 or ZoneMount_IsInRemix()) then
     return 'flying'
-  elseif ZoneMount_InDraenor() and UnitLevel("player") >= 30 then
+  elseif ZoneMount_InDraenor() and UnitLevel("player") >= 10 then
     return 'flying'
   elseif IsSubmerged() or IsSwimming() then
     return 'water'
@@ -855,11 +855,15 @@ function ZoneMount_DisplayHelp()
 end
 
 function ZoneMount_IsAlreadyMounted(mount_name)
+  if not IsMounted() then
+    return false
+  end
+
   for i = 1, 40 do 
     local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
       nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
       nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
-      = UnitAura('player', i)
+      = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
     if name == mount_name then
       return true
     end
@@ -879,7 +883,7 @@ function ZoneMount_CurrentMount()
     local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
       nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
       nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
-      = UnitAura('player', i)
+      = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
 
     for x = 1, #mount_names do
       if mount_names[x].name == name then
@@ -1187,7 +1191,7 @@ function ZoneMount_addInterfaceOptions()
   Title:SetJustifyV('TOP')
   Title:SetJustifyH('LEFT')
   Title:SetPoint('TOPLEFT', 16, y)
-  local v = GetAddOnMetadata("ZoneMount", "Version") 
+  local v = C_AddOns.GetAddOnMetadata("ZoneMount", "Version") 
   Title:SetText('ZoneMount v' .. v)
   y = y - 44
 
@@ -1267,7 +1271,7 @@ function ZoneMount_addInterfaceOptions()
   shiftInfo2:SetJustifyV('TOP')
   shiftInfo2:SetJustifyH('LEFT')
   shiftInfo2:SetPoint('TOPLEFT', 40, y)
-  shiftInfo2:SetText('If your level is 10 - 29, you can skyride but not steady fly.')
+  shiftInfo2:SetText('If your level is 10 - 19, you can skyride but not steady fly.')
   y = y - 16
 
   local shiftInfo3 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
