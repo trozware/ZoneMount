@@ -9,7 +9,6 @@
 -- 132226 = Horse shoe icon - gold
 -- 136103 = Horse shoe icon - blue
 
-
 ZoneMount = {} 
 
 local ZoneMount_EventFrame = CreateFrame("Frame")
@@ -596,7 +595,7 @@ function ZoneMount_TypeOfMountToSummon()
     return 'none'
   elseif ZoneMount_IsUnderwater() then
     return 'water'
-  elseif UnitLevel("player") >= 10 and UnitLevel("player") < 30 then
+  elseif UnitLevel("player") >= 10 and UnitLevel("player") < 20 then
     if IsModifierKeyDown() then
       return 'ground'
     else
@@ -605,6 +604,10 @@ function ZoneMount_TypeOfMountToSummon()
   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
     return 'dragon'
   elseif IsFlyableArea() and (UnitLevel("player") >= 10 or ZoneMount_IsInRemix()) then
+    return 'flying'
+  elseif UnitLevel("player") >= 70 and ZoneMount_HasWarWithinPathfinder() then
+    return 'flying'
+  elseif ZoneMount_CanSkyride() then
     return 'flying'
   elseif ZoneMount_InDraenor() and UnitLevel("player") >= 10 then
     return 'flying'
@@ -756,6 +759,26 @@ function ZoneMount_CanDragonFly()
     return isUsable and isCollected and isForDragonriding
   end
 end
+
+-- 40231 = War Within Pathfinder achievement
+function ZoneMount_HasWarWithinPathfinder()
+  local achievementID = 40231
+  local _, _, _, completed = GetAchievementInfo(achievementID)
+  return completed
+end
+
+-- /dump C_Spell.GetSpellInfo("Skyriding Basics") -> 376777
+-- /dump C_Spell.GetSpellInfo(376777)
+-- /dump C_Spell.IsSpellUsable(376777)
+function ZoneMount_CanSkyride()
+  local spellID = 376777
+  local isUsable = C_Spell.IsSpellUsable(spellID)
+  return isUsable
+end
+
+-- /dump C_Spell.GetSpellInfo("Switch Flight Style") -> 436854
+-- /dump C_Spell.GetSpellInfo(436854)
+-- /dump C_Spell.IsSpellUsable(436854)
 
 function ZoneMount_SearchForMount(search_name)
   if ZoneMount_ShouldLookForNewMount() == 'no' then
@@ -920,7 +943,7 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/cast [mod] Switch Flight Style\n/zm mount", nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", "/quietcast\n/cast [mod] Switch Flight Style\n/zm mount", nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -935,7 +958,7 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/cast [mod] Switch Flight Style\n/zm mount", nil, nil)
+      EditMacro(macroIndex, "ZoneMount", "136103", "/quietcast\n/cast [mod] Switch Flight Style\n/zm mount", nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end

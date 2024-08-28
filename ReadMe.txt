@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.7.0: Updated for The War Within. Better detection for skyriding ability.
 v 1.6.3: Fix for remix bug.
 v 1.6.2: Updated to fix errors with 11.0.2.
 v 1.6.1: Allows for skyriding at level 10. Shift-click ZoneMount macro for ground mount if less than 30.
