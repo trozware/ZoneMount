@@ -48,6 +48,7 @@ By default, dragonriding mounts will be called in Dragon Isles but not outside t
 
 ### Version History
 
+- v 1.7.1: Allows for War Within Pathfinder, /zm about working again.
 - v 1.7.0: Updated for The War Within. Better detection for skyriding ability.
 - v 1.6.3: Fix for remix bug.
 - v 1.6.2: Updated to fix errors with 11.0.2.

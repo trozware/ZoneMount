@@ -173,6 +173,7 @@ function ZoneMount_MountOrDismount()
       Dismount()
       ZoneMount_LastDismountCommand = nil
       ZoneMount_LastSummonTime = now - 2
+      ZoneMount_UpdateMacro()   -- in case Pathfinder achievement has been earned
     elseif ZoneMount_HasMacroInstalled then
       local now = GetTime()           -- time in seconds
       if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
@@ -744,6 +745,16 @@ function ZoneMount_InDragonIsles()
   return false
 end
 
+function ZoneMount_IsInKhazAlgar()
+  local zone_names = ZoneMount_ZoneNames()
+  for n = 1, #zone_names do
+    if zone_names[n] == 'Khaz Algar' then
+      return true
+    end
+  end
+  return false
+end
+
 function ZoneMount_CanDragonFly()
   ZoneMount_clearFilters()
   C_MountJournal.SetAllTypeFilters(false)
@@ -775,10 +786,6 @@ function ZoneMount_CanSkyride()
   local isUsable = C_Spell.IsSpellUsable(spellID)
   return isUsable
 end
-
--- /dump C_Spell.GetSpellInfo("Switch Flight Style") -> 436854
--- /dump C_Spell.GetSpellInfo(436854)
--- /dump C_Spell.IsSpellUsable(436854)
 
 function ZoneMount_SearchForMount(search_name)
   if ZoneMount_ShouldLookForNewMount() == 'no' then
@@ -883,11 +890,12 @@ function ZoneMount_IsAlreadyMounted(mount_name)
   end
 
   for i = 1, 40 do 
-    local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
-      nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
-      nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
-      = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
-    if name == mount_name then
+    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+    if aura == nil then
+      return false
+    end
+
+    if aura.name == mount_name then
       return true
     end
   end
@@ -903,10 +911,12 @@ function ZoneMount_CurrentMount()
   local mount_names = ZoneMount_ListMountNames()
 
   for i = 1, 40 do 
-    local name, icon, count, debuffType, duration, expirationTime, source, isStealable, 
-      nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, 
-      nameplateShowAll, timeMod, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11 
-      = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+    if aura == nil then
+      return ''
+    end
+
+    local name = aura.name
 
     for x = 1, #mount_names do
       if mount_names[x].name == name then
@@ -943,7 +953,8 @@ function ZoneMount_CreateMacro()
     return
   end
 
-  local macro_id = CreateMacro("ZoneMount", "136103", "/quietcast\n/cast [mod] Switch Flight Style\n/zm mount", nil, nil);
+  local macroText = ZoneMount_MacroText()
+  local macro_id = CreateMacro("ZoneMount", "136103", macroText, nil, nil);
   if macro_id then
     ZoneMount_HasMacroInstalled = true
     ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
@@ -958,10 +969,28 @@ function ZoneMount_UpdateMacro()
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
-      EditMacro(macroIndex, "ZoneMount", "136103", "/quietcast\n/cast [mod] Switch Flight Style\n/zm mount", nil, nil)
+      local macroText = ZoneMount_MacroText()
+      EditMacro(macroIndex, "ZoneMount", "136103", macroText, nil, nil)
     end
     ZoneMount_HasMacroInstalled = true
   end
+end
+
+-- /dump C_Spell.GetSpellInfo("Switch Flight Style") -> 436854
+-- /dump C_Spell.GetSpellInfo(436854)
+-- /dump C_Spell.IsSpellUsable(436854)
+function ZoneMount_MacroText()
+  local canSteadyFly = C_Spell.IsSpellUsable(436854)
+  local canSwitch = ZoneMount_CanSkyride() and canSteadyFly
+  if ZoneMount_IsInKhazAlgar() then
+    canSwitch = ZoneMount_HasWarWithinPathfinder()
+  end
+  if canSwitch then
+    local macroText = "/quietcast\n/cast [mod] Switch Flight Style\n/zm mount"
+    return macroText
+  end
+  local macroText = "/zm mount"
+  return macroText
 end
 
 function ZoneMount_ZoneNames()
@@ -1187,8 +1216,13 @@ end
 
 function ZoneMount_IsInRemix()
   for i = 1, 50 do 
-    local name, icon, count, dispelType, duration, expirationTime, source, isStealable, nameplateShowPersonal,
-      spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = C_UnitAuras.GetAuraDataByIndex('player', i)
+    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+    if aura == nil then
+      return false
+    end
+
+    local name = aura.name
+    local spellId = aura.spellId
     if name and spellId then
       if name.find(name, 'Remix') or spellId == 424143 then
         return true
