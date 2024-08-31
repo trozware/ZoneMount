@@ -36,6 +36,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.7.2: Should allow mounting with Radiant Light in The Dawnbreaker dungeon.
 v 1.7.1: Allows for War Within Pathfinder, /zm about working again.
 v 1.7.0: Updated for The War Within. Better detection for skyriding ability.
 v 1.6.3: Fix for remix bug.

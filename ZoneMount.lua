@@ -625,7 +625,9 @@ function ZoneMount_ShouldLookForNewMount()
   end
 
   if InCombatLockdown() then
-    return 'You are in combat.'
+    if ZoneMount_HasRadiantLight() == false then
+      return 'You are in combat.'
+    end
   end
 
   if UnitIsDeadOrGhost("player") then
@@ -1214,6 +1216,7 @@ function ZoneMount_Tests()
   -- end
 end
 
+-- /dump C_Spell.GetSpellInfo(424143)
 function ZoneMount_IsInRemix()
   for i = 1, 50 do 
     local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
@@ -1227,6 +1230,28 @@ function ZoneMount_IsInRemix()
       if name.find(name, 'Remix') or spellId == 424143 then
         return true
       end
+    else
+      return false
+    end
+  end
+end
+
+-- /dump C_Spell.GetSpellInfo(449026)
+-- /dump ZoneMount_HasRadiantLight()
+function ZoneMount_HasRadiantLight()
+  local radiantLightSpellID = 449026
+  if UnitLevel("player") < 70 then
+    return false
+  end
+
+  for i = 1, 50 do 
+    local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+    if aura == nil then
+      return false
+    end
+
+    if aura.spellId == radiantLightSpellID then
+      return true
     else
       return false
     end
