@@ -1005,7 +1005,7 @@ function ZoneMount_ZoneNames()
 
   zone_names[#zone_names + 1] = GetZoneText()
   local subZone = GetSubZoneText()
-  if subZone then
+  if subZone and #subZone > 0 then
     zone_names[#zone_names + 1] = subZone
   end
 
