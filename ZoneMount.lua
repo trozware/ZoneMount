@@ -660,9 +660,7 @@ function ZoneMount_ShouldLookForNewMount()
 end
 
 function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
-  if required_type == 'dragon' and (isForDragonriding or type_id == 402) then
-    return true
-  elseif required_type == 'water' then
+  if required_type == 'water' then
     if type_id == 231 or type == 407 then
       -- turtles work on land or water
       -- 407s work in water & flying
@@ -677,7 +675,7 @@ function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
       return false
     end
   elseif required_type == 'flying' then
-    if type_id == 247 or type_id == 248 or type_id == 398 or type_id == 407 or type_id == 424 then
+    if type_id == 247 or type_id == 248 or type_id == 398 or type_id == 407 or type_id == 424 or type_id == 402 then
       return true
     else
       return false
