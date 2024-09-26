@@ -48,17 +48,17 @@ function ZoneMount:Initialize()
       hideInfo = false,
       slowInfo = false,
       hideWarnings = false,
-      dragonIslesDefaultDragon = true,
-      otherPlacesDefaultNonDragon = true
+      -- dragonIslesDefaultDragon = true,
+      -- otherPlacesDefaultNonDragon = true
 		}
   end
 
-  if zoneMountSettings.dragonIslesDefaultDragon == nil then
-    zoneMountSettings.dragonIslesDefaultDragon = true
-  end
-  if zoneMountSettings.otherPlacesDefaultNonDragon == nil then
-    zoneMountSettings.otherPlacesDefaultNonDragon = true
-  end
+  -- if zoneMountSettings.dragonIslesDefaultDragon == nil then
+  --   zoneMountSettings.dragonIslesDefaultDragon = true
+  -- end
+  -- if zoneMountSettings.otherPlacesDefaultNonDragon == nil then
+  --  zoneMountSettings.otherPlacesDefaultNonDragon = true
+  -- end
 
   ZoneMount_addInterfaceOptions()
 end
@@ -210,13 +210,13 @@ function ZoneMount_LookForMount()
 
   local mount_type = ZoneMount_TypeOfMountToSummon()
   local secondary_mount_type = 'ground'
-  if mount_type == 'dragon' then
-    secondary_mount_type = 'dragon'
-  else
+  -- if mount_type == 'dragon' then
+  --   secondary_mount_type = 'dragon'
+  -- else
     if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 30 then
       secondary_mount_type = 'flying'
     end 
-  end
+  -- end
 
   -- print('Looking for ', mount_type, 'mount')
   if mount_type == 'none' then
@@ -574,23 +574,23 @@ end
 
 -- /run print(ZoneMount_TypeOfMountToSummon())
 function ZoneMount_TypeOfMountToSummon()
-  local shouldUseDragon = false
+  -- local shouldUseDragon = false
 
-  if ZoneMount_InDragonIsles() then
-    if zoneMountSettings.dragonIslesDefaultDragon and IsModifierKeyDown() == false then
-      shouldUseDragon = true
-    elseif zoneMountSettings.dragonIslesDefaultDragon == false and IsModifierKeyDown() then
-      shouldUseDragon = true
-    end
-  else
-    if zoneMountSettings.otherPlacesDefaultNonDragon and IsModifierKeyDown() == false then
-      shouldUseDragon = false
-    elseif zoneMountSettings.otherPlacesDefaultNonDragon == false and IsModifierKeyDown() then
-      shouldUseDragon = false
-    elseif UnitLevel("player") >= 10 or ZoneMount_IsInRemix() then
-      shouldUseDragon = true
-    end
-  end
+  -- if ZoneMount_InDragonIsles() then
+  --   if zoneMountSettings.dragonIslesDefaultDragon and IsModifierKeyDown() == false then
+  --     shouldUseDragon = true
+  --   elseif zoneMountSettings.dragonIslesDefaultDragon == false and IsModifierKeyDown() then
+  --     shouldUseDragon = true
+  --   end
+  -- else
+  --   if zoneMountSettings.otherPlacesDefaultNonDragon and IsModifierKeyDown() == false then
+  --     shouldUseDragon = false
+  --   elseif zoneMountSettings.otherPlacesDefaultNonDragon == false and IsModifierKeyDown() then
+  --     shouldUseDragon = false
+  --   elseif UnitLevel("player") >= 10 or ZoneMount_IsInRemix() then
+  --     shouldUseDragon = true
+  --   end
+  -- end
 
   if IsIndoors() then
     return 'none'
@@ -602,8 +602,8 @@ function ZoneMount_TypeOfMountToSummon()
     else
       return 'flying'
     end
-  elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
-    return 'dragon'
+--   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
+--     return 'dragon'
   elseif IsFlyableArea() and (UnitLevel("player") >= 10 or ZoneMount_IsInRemix()) then
     return 'flying'
   elseif UnitLevel("player") >= 70 and ZoneMount_HasWarWithinPathfinder() then
@@ -661,7 +661,7 @@ end
 
 function ZoneMount_RightMountType(required_type, type_id, isForDragonriding)
   if required_type == 'water' then
-    if type_id == 231 or type == 407 then
+    if type_id == 231 or type_id == 407 then
       -- turtles work on land or water
       -- 407s work in water & flying
       return true
@@ -755,6 +755,7 @@ function ZoneMount_IsInKhazAlgar()
   return false
 end
 
+-- appears to be deprecated (isForDragonriding always false)
 function ZoneMount_CanDragonFly()
   ZoneMount_clearFilters()
   C_MountJournal.SetAllTypeFilters(false)
