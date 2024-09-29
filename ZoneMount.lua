@@ -9,6 +9,8 @@
 -- 132226 = Horse shoe icon - gold
 -- 136103 = Horse shoe icon - blue
 
+-- When checking zone names, can I check by ID to avoid translation issues?
+
 ZoneMount = {} 
 
 local ZoneMount_EventFrame = CreateFrame("Frame")
@@ -49,7 +51,8 @@ function ZoneMount:Initialize()
       slowInfo = false,
       hideWarnings = false,
       -- dragonIslesDefaultDragon = true,
-      -- otherPlacesDefaultNonDragon = true
+      -- otherPlacesDefaultNonDragon = true,
+      ignores = {}
 		}
   end
 
@@ -57,8 +60,11 @@ function ZoneMount:Initialize()
   --   zoneMountSettings.dragonIslesDefaultDragon = true
   -- end
   -- if zoneMountSettings.otherPlacesDefaultNonDragon == nil then
-  --  zoneMountSettings.otherPlacesDefaultNonDragon = true
+  --   zoneMountSettings.otherPlacesDefaultNonDragon = true
   -- end
+  if not zoneMountSettings.ignores then
+    zoneMountSettings.ignores = {}
+  end
 
   ZoneMount_addInterfaceOptions()
 end
@@ -173,7 +179,9 @@ function ZoneMount_MountOrDismount()
       Dismount()
       ZoneMount_LastDismountCommand = nil
       ZoneMount_LastSummonTime = now - 2
-      ZoneMount_UpdateMacro()   -- in case Pathfinder achievement has been earned
+      if IsInGroup() == false then
+        ZoneMount_UpdateMacro()   -- in case Pathfinder achievement has been earned
+      end
     elseif ZoneMount_HasMacroInstalled then
       local now = GetTime()           -- time in seconds
       if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
@@ -213,9 +221,9 @@ function ZoneMount_LookForMount()
   -- if mount_type == 'dragon' then
   --   secondary_mount_type = 'dragon'
   -- else
-    if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 30 then
-      secondary_mount_type = 'flying'
-    end 
+  if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 30 then
+    secondary_mount_type = 'flying'
+  end 
   -- end
 
   -- print('Looking for ', mount_type, 'mount')
@@ -262,6 +270,7 @@ function ZoneMount_LookForMount()
         -- print(valid_mounts[n].name, mountTypeID)
         -- print(description)
         -- print(matchingZoneName)
+
     
           type_mounts[#type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
               description = description, source = '' }
@@ -272,7 +281,7 @@ function ZoneMount_LookForMount()
               description = description, source = matchingZoneName }
           else
             validZone = false
-            if source then 
+            if source and #source > 0 then 
               if string.find(source, 'Game') then
                 validZone = true
               elseif string.find(source, 'Promotion') then
@@ -410,7 +419,7 @@ function ZoneMount_LookForMount()
     source = zone_mounts[mount_index].source
   until (ZoneMount_IsAlreadyMounted(name) == false and id ~= ZoneMount_LastSummon) or #zone_mounts == 1
 
-  if not description then
+  if not description or #description == 0 then
     description = ZoneMount_DescriptionForMount(id)
   end
   ZoneMount_DisplaySummonMessage(name, source, description)
@@ -533,6 +542,19 @@ function ZoneMount_ValidMounts()
       end
     end
 
+    -- ignored names
+    if isUsable and isCollected and creatureName and zoneMountSettings.ignores then
+      for n = 1, #zoneMountSettings.ignores do
+        if zoneMountSettings.ignores[n] then
+          local testName = string.lower(zoneMountSettings.ignores[n])
+          local index = string.find(string.lower(creatureName), testName)
+          if index then
+            isUsable = false
+          end
+        end
+      end
+    end
+
     if zoneMountSettings.favsOnly == false or isFavorite == true then
       if isCollected and (mountID == 1304 or mountID == 1441 or mountID == 1442) then
         maw_mounts[#maw_mounts + 1] = { name = creatureName, ID = mountID }
@@ -602,8 +624,8 @@ function ZoneMount_TypeOfMountToSummon()
     else
       return 'flying'
     end
---   elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
---     return 'dragon'
+  -- elseif ZoneMount_CanDragonFly() and shouldUseDragon == true then
+  --   return 'dragon'
   elseif IsFlyableArea() and (UnitLevel("player") >= 10 or ZoneMount_IsInRemix()) then
     return 'flying'
   elseif UnitLevel("player") >= 70 and ZoneMount_HasWarWithinPathfinder() then
@@ -622,12 +644,6 @@ end
 function ZoneMount_ShouldLookForNewMount()
   if UnitIsFeignDeath("player") then
     return 'You are feigning death.'
-  end
-
-  if InCombatLockdown() then
-    if ZoneMount_HasRadiantLight() == false then
-      return 'You are in combat.'
-    end
   end
 
   if UnitIsDeadOrGhost("player") then
@@ -654,6 +670,14 @@ function ZoneMount_ShouldLookForNewMount()
 
   if UnitOnTaxi("player") == true then
     return 'You are in a taxi.'
+  end
+
+  if ZoneMount_HasRadiantLight() == true then
+    return 'yes'
+  end
+
+  if InCombatLockdown() then
+    return 'You are in combat.'
   end
 
   return 'yes'
@@ -1008,7 +1032,7 @@ function ZoneMount_ZoneNames()
     zone_names[#zone_names + 1] = subZone
   end
 
-  if info == nil or info.name == nil then
+  if info == nil or info.name == nil or info.name == '' then
     return zone_names
   end
 
@@ -1026,7 +1050,7 @@ function ZoneMount_ZoneNames()
     map_id = info.parentMapID
     info = C_Map.GetMapInfo(map_id)
 
-    if info and info.name and ZoneMount_InTable(zone_names, info.name) == false then
+    if info and info.name and #info.name > 0 and ZoneMount_InTable(zone_names, info.name) == false then
       previous_map_id = map_id
       zone_names[#zone_names + 1] = info.name
     end
@@ -1239,22 +1263,36 @@ end
 -- /dump ZoneMount_HasRadiantLight()
 function ZoneMount_HasRadiantLight()
   local radiantLightSpellID = 449026
+  local radiantLightDebuffID = 449042
+
   if UnitLevel("player") < 70 then
     return false
   end
 
-  for i = 1, 50 do 
+  for i = 1, 100 do 
     local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
     if aura == nil then
-      return false
-    end
-
-    if aura.spellId == radiantLightSpellID then
-      return true
+      break
     else
-      return false
+      if aura.spellId and aura.spellId == radiantLightSpellID then
+        return true
+      end
     end
   end
+
+  for i = 1, 100 do 
+    local aura = C_TooltipInfo.GetUnitDebuff('player', i)
+
+    if aura == nil then
+      break
+    else
+      if aura.id and aura.id == radiantLightDebuffID then
+        return true
+      end
+    end
+  end
+
+  return false
 end
 
 function ZoneMount_addInterfaceOptions()
@@ -1339,7 +1377,7 @@ function ZoneMount_addInterfaceOptions()
     local isChecked = btn2:GetChecked()
     zoneMountSettings.favsOnly = isChecked
   end)
-  y = y - 60
+  y = y - 120
 
   local shiftInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   shiftInfo1:SetJustifyV('TOP')
@@ -1388,5 +1426,111 @@ function ZoneMount_addInterfaceOptions()
   druidInfo4:SetJustifyH('LEFT')
   druidInfo4:SetPoint('TOPLEFT', 100, y)
   druidInfo4:SetText('/cancelform')
+
+  y = -60
+  local addIgnoreTitle = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  addIgnoreTitle:SetJustifyV('TOP')
+  addIgnoreTitle:SetJustifyH('LEFT')
+  addIgnoreTitle:SetPoint('TOPLEFT', 400, y)
+  addIgnoreTitle:SetText('Toggle Ignore:')
+
+  y = y - 16
+  local clearIgnoresBtn = CreateFrame("Button", nil, ZoneMount.panel, "UIPanelButtonTemplate")
+	clearIgnoresBtn:SetSize(100,26)
+	clearIgnoresBtn:SetText('Clear Ignores')
+  clearIgnoresBtn:SetPoint('TOPLEFT', 510, y)
+  clearIgnoresBtn.tooltipTitle = 'Clear your ignore list.'
+  clearIgnoresBtn.tooltipBody = 'All the names in your ignore list will be deleted.'
+  clearIgnoresBtn:SetScript("OnClick",function() 
+    zoneMountSettings.ignores = {}
+    ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+  end)
+
+  local addIgnoreBox = CreateFrame('editbox', nil, ZoneMount.panel, 'InputBoxTemplate')
+  addIgnoreBox:SetPoint('TOPLEFT', 400, y)
+  addIgnoreBox:SetHeight(20)
+  addIgnoreBox:SetWidth(100)
+  addIgnoreBox:SetText('')
+  addIgnoreBox:SetAutoFocus(false)
+  addIgnoreBox:ClearFocus()
+  addIgnoreBox:SetScript('OnEnterPressed', function(self)
+    self:SetAutoFocus(false) -- Clear focus when enter is pressed because ketho said so
+    self:ClearFocus()
+    ZoneMount_IgnoreMount(self:GetText())
+    self:SetText('')
+  end)
   y = y - 40
+
+  ZoneMount_ignoresList = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  ZoneMount_ignoresList:SetJustifyV('TOP')
+  ZoneMount_ignoresList:SetJustifyH('LEFT')
+  ZoneMount_ignoresList:SetHeight(180)
+  ZoneMount_ignoresList:SetWidth(120)
+  ZoneMount_ignoresList:SetPoint('TOPLEFT', 400, y)
+  ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+end
+
+function ZoneMount_IgnoreMount(name)
+  if #name < 3 then
+    ZoneMount_displayMessage("|c0000FF00ZoneMount |c0000FFFFIgnore name must be at least 3 characters.")
+    return
+  end
+
+  if not zoneMountSettings.ignores then
+    zoneMountSettings.ignores = {}
+  end
+  
+
+  if #zoneMountSettings.ignores >= 14 then
+    ZoneMount_displayMessage("|c0000FF00ZoneMount |c0000FFFFYou can only add 14 names to the ignore list.")
+    return
+  end
+  
+  local haveRemoved = false
+  local afterRemove = {}
+  local testName = string.lower(name)
+
+  for n = 1, #zoneMountSettings.ignores do
+    local ignoreName = string.lower(zoneMountSettings.ignores[n])
+    if ignoreName == testName then
+      haveRemoved = true
+    else
+      afterRemove[#afterRemove + 1] = zoneMountSettings.ignores[n]
+    end
+  end
+
+  if haveRemoved then
+    zoneMountSettings.ignores = afterRemove
+  else
+    zoneMountSettings.ignores[#zoneMountSettings.ignores + 1] = name
+  end
+
+  ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+end
+
+function ZoneMount_ListIgnores()
+  if not zoneMountSettings.ignores then
+    zoneMountSettings.ignores = {}
+    return 'Type a name or partial name above to ignore any mount whose name contains that text (case-insensitive).\n\nEnter the same text again to remove it from the list.'
+  end
+
+  -- trim empties or shorts
+  local afterRemove = {}
+  for n = 1, #zoneMountSettings.ignores do
+    if #zoneMountSettings.ignores[n] >= 3 then
+      afterRemove[#afterRemove + 1] = zoneMountSettings.ignores[n]
+    end
+  end
+  zoneMountSettings.ignores = afterRemove
+
+  local ignoreText = ''
+  for n = 1, #zoneMountSettings.ignores do
+    ignoreText = ignoreText .. zoneMountSettings.ignores[n] .. '\n'
+  end
+  ignoreText = ignoreText:sub(1, -2)
+
+  if #ignoreText == 0 then
+    return 'Type a name or partial name above to ignore any mount whose name contains that text (case-insensitive).\n\nEnter the same text again to remove it from the list.'
+  end
+  return ignoreText 
 end
