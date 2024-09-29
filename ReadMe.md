@@ -30,7 +30,7 @@ Read the mount's name and description in the Chat. These descriptions can be ver
 
 Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat and to make **Zone Mount** choose from your favorite mounts only.
 
-By default, dragonriding mounts will be called in Dragon Isles but not outside them. Hold down a modifier key (Shift, Ctrl or Alt) while clicking the macro button to call the other type. You can change the default behavior in Game Menu > Options > AddOns > ZoneMount.
+NEW: To ignore specific mounts, go to Game Menu > Interface > AddOns > ZoneMount. Type a name or partial name into the ignore field and press Return/Enter to add it to the list. If the entry is already in the list, it will be removed, or you can click the button to clear the entire list. This will block any mounts with names containing the entered text, case does not matter e.g. entering "gryphon" will block all pet names that include the text "gryphon" which covers "Ebon Gryphon" and "Snowy Gryphon" as well as many others.
 
 ### Slash Commands
 
