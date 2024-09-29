@@ -989,13 +989,20 @@ function ZoneMount_CreateMacro()
   end
 end
 
-function ZoneMount_UpdateMacro() 
+function ZoneMount_UpdateMacro()
+  if InCombatLockdown() then
+    return
+  end
+
   local existing_macro = GetMacroInfo('ZoneMount')
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
       local macroText = ZoneMount_MacroText()
-      EditMacro(macroIndex, "ZoneMount", "136103", macroText, nil, nil)
+      local currentText = GetMacroBody(macroIndex)
+      if macroText ~= currentText then
+        EditMacro(macroIndex, "ZoneMount", "136103", macroText, nil, nil)
+      end
     end
     ZoneMount_HasMacroInstalled = true
   end
