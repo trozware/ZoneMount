@@ -21,7 +21,9 @@ If you really do want to plummet out of the sky, click the macro button twice in
 
 Read the mount's name and description in the Chat. These descriptions can be very funny - yet another way we are missing out on some good content.
 
-Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat and to make Zone Mount choose from your favorite mounts only.
+Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat, to make Zone Mount choose from your favorite mounts only.
+
+NEW: To ignore specific mounts, go to Game Menu > Interface > AddOns > ZoneMount. Type a name or partial name into the ignore field and press Return/Enter to add it to the list. If the entry is already in the list, it will be removed, or you can click the button to clear the entire list. This will block any mounts with names containing the entered text, case does not matter e.g. entering "gryphon" will block all pet names that include the text "gryphon" which covers "Ebon Gryphon" and "Snowy Gryphon" as well as many others.
 
 
 Slash Commands:
@@ -36,6 +38,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.8.0: Mounting in the Dawnbreaker now works correctly. Better summoning in zones without secondary names and for dragon type mounts. Ignore list in Options.
 v 1.7.2: Should allow mounting with Radiant Light in The Dawnbreaker dungeon.
 v 1.7.1: Allows for War Within Pathfinder, /zm about working again.
 v 1.7.0: Updated for The War Within. Better detection for skyriding ability.
