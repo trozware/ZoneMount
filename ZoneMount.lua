@@ -779,7 +779,7 @@ function ZoneMount_IsInKhazAlgar()
   return false
 end
 
---  appears to be deprecated (isForDragonriding always false)
+-- appears to be deprecated (isForDragonriding always false)
 function ZoneMount_CanDragonFly()
   ZoneMount_clearFilters()
   C_MountJournal.SetAllTypeFilters(false)
