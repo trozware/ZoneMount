@@ -38,6 +38,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 1.8.3: Updated for 11.0.5.
 v 1.8.2: Fix for possible error when editing macro.
 v 1.8.1: Merge PR, update ReadMe.
 v 1.8.0: Mounting in the Dawnbreaker now works correctly. Better summoning in zones without secondary names and for dragon type mounts. Ignore list in Options.

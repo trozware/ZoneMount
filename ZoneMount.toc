@@ -1,7 +1,7 @@
 ## Title: Zone Mount
-## Interface: 110002
+## Interface: 110005
 ## Author: Sarah Reichelt
-## Version: 1.8.2
+## Version: 1.8.3
 
 ## SavedVariables: zoneMountSettings
 ## X-Category: Mounts
