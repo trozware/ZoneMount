@@ -1,9 +1,14 @@
 ## Title: Zone Mount
-## Interface: 110005
+## Interface: 110007
 ## Author: Sarah Reichelt
-## Version: 1.8.3
+## Version: 2.0.0
 
 ## SavedVariables: zoneMountSettings
 ## X-Category: Mounts
 
 ZoneMount.lua
+ZoneMountInterface.lua
+ZoneMountSummon.lua
+ZoneMountZones.lua
+ZoneMountMacro.lua
+ZoneMountTests.lua

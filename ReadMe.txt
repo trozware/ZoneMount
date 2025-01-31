@@ -21,7 +21,7 @@ If you really do want to plummet out of the sky, click the macro button twice in
 
 Read the mount's name and description in the Chat. These descriptions can be very funny - yet another way we are missing out on some good content.
 
-Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat, to make Zone Mount choose from your favorite mounts only.
+Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat, to make Zone Mount choose from your favorite mounts only and to set other options.
 
 NEW: To ignore specific mounts, go to Game Menu > Interface > AddOns > ZoneMount. Type a name or partial name into the ignore field and press Return/Enter to add it to the list. If the entry is already in the list, it will be removed, or you can click the button to clear the entire list. This will block any mounts with names containing the entered text, case does not matter e.g. entering "gryphon" will block all mount names that include the text "gryphon" which covers "Ebon Gryphon" and "Snowy Gryphon" as well as many others.
 
@@ -38,7 +38,8 @@ Slash Commands:
 Version History:
 ===============
 
-v 1.8.3: Updated for 11.0.5.
+v 2.0.0: Updated for 11.0.7. Added option to choose modifiers keys for steady flight/skyriding toggle. Added option to turn off choosing non-zone mounts if you only have one for the zone.
+v 1.8.3: Updated for 11.0.5.v 1.8.3: Updated for 11.0.5.
 v 1.8.2: Fix for possible error when editing macro.
 v 1.8.1: Merge PR, update ReadMe.
 v 1.8.0: Mounting in the Dawnbreaker now works correctly. Better summoning in zones without secondary names and for dragon type mounts. Ignore list in Options.
