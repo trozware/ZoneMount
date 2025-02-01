@@ -31,7 +31,7 @@ If you really do want to plummet out of the sky, click the macro button twice in
 Shift-click the macro to toggle between skyriding and steady flying modes.
 Alt-click the macro to summon a ground mount.
 
-Use Game Menu > Options > AddOns > ZoneMount to set whether and how often you want the mount info to appear in the chat and to make **Zone Mount** choose from your favorite mounts only and to set the modifier keys for skyriding and ground mounts.
+Use **Game Menu > Options > AddOns > ZoneMount** to set whether and how often you want the mount info to appear in the chat, to make **Zone Mount** choose from your favorite mounts only, to set the modifier keys for skyriding and ground mounts and to configure other options.
 
 To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type a name or partial name into the ignore field and press Return/Enter to add it to the list. If the entry is already in the list, it will be removed, or you can click the button to clear the entire list. This will block any mounts with names containing the entered text, case does not matter e.g. entering "gryphon" will block all mount names that include the text "gryphon" which covers "Ebon Gryphon" and "Snowy Gryphon" as well as many others.
 
@@ -51,6 +51,7 @@ To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type 
 
 ### Version History
 
+- v 2.0.2: Set default modifiers to Shift for flight mode and Alt for ground mounts.
 - v 2.0.1: Added option to choose modifier to summon a ground mount.
 - v 2.0.0: Updated for 11.0.7. Added option to choose modifiers keys for steady flight/skyriding toggle. Added option to turn off choosing non-zone mounts if you only have one for the zone.
 - v 1.8.3: Updated for 11.0.5.

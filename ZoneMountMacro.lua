@@ -47,6 +47,16 @@ function ZoneMount_MacroText()
   if ZoneMount_IsInKhazAlgar() then
     canSwitch = ZoneMount_HasWarWithinPathfinder()
   end
+
+  if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
+    zoneMountSettings.shiftSwitchStyle = true
+    ZoneMount_btnShift:SetChecked(true)
+  end
+  if zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and zoneMountSettings.altUseGround == false then
+    zoneMountSettings.altUseGround = true
+    ZoneMount_btnAlt2:SetChecked(true)
+  end
+
   if canSwitch then
     local mods = ''
     if zoneMountSettings.shiftSwitchStyle then

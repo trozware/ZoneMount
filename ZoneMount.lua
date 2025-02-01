@@ -68,6 +68,14 @@ function ZoneMount:Initialize()
     zoneMountSettings.ignores = {}
   end
 
+  if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
+    zoneMountSettings.shiftSwitchStyle = true
+  end
+
+  if zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and zoneMountSettings.altUseGround == false then
+    zoneMountSettings.altUseGround = true
+  end
+
   ZoneMount_addInterfaceOptions()
 end
 
