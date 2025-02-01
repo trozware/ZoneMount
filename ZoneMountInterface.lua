@@ -86,7 +86,7 @@ function ZoneMount_addInterfaceOptions()
   local btnPad = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
 	btnPad:SetSize(26,26)
 	btnPad:SetHitRectInsets(-2,-200,-2,-2)
-	btnPad.text:SetText('  Add extras if you only have one mount from this zone')
+	btnPad.text:SetText('  Choose non-zone mounts sometimes,')
 	btnPad.text:SetFontObject("GameFontNormal")
   btnPad:SetPoint('TOPLEFT', 40, y)
   btnPad:SetChecked(zoneMountSettings.padZoneList)
@@ -94,7 +94,14 @@ function ZoneMount_addInterfaceOptions()
     local isChecked = btnPad:GetChecked()
     zoneMountSettings.padZoneList = isChecked
   end)
-  y = y - 70
+  y = y - 24
+
+  local padInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  padInfo1:SetJustifyV('TOP')
+  padInfo1:SetJustifyH('LEFT')
+  padInfo1:SetPoint('TOPLEFT', 70, y)
+  padInfo1:SetText(' if you only have one mount from this zone')
+  y = y - 60
 
   local shiftInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   shiftInfo1:SetJustifyV('TOP')
@@ -103,66 +110,123 @@ function ZoneMount_addInterfaceOptions()
   shiftInfo1:SetText('Select the modifiers to toggle between skyriding & steady flying when clicking the macro button:')
   y = y - 16
 
-  local btnShift = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-  btnShift:SetSize(26,26)
-  btnShift:SetHitRectInsets(-2,-60,-2,-2)
-  btnShift.text:SetText('  Shift')
-  btnShift.text:SetFontObject("GameFontNormal")
-  btnShift:SetPoint('TOPLEFT', 40, y)
-  btnShift:SetChecked(zoneMountSettings.shiftSwitchStyle)
-  btnShift:SetScript("OnClick",function() 
-    local isCheckedShift = btnShift:GetChecked()
+  ZoneMount_btnShift = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnShift:SetSize(26,26)
+  ZoneMount_btnShift:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnShift.text:SetText('  Shift')
+  ZoneMount_btnShift.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnShift:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnShift:SetChecked(zoneMountSettings.shiftSwitchStyle)
+  ZoneMount_btnShift:SetScript("OnClick",function() 
+    local isCheckedShift = ZoneMount_btnShift:GetChecked()
     zoneMountSettings.shiftSwitchStyle = isCheckedShift
+    if isCheckedShift then
+      zoneMountSettings.shiftUseGround = false
+      ZoneMount_btnShift2:SetChecked(false)
+    end
     ZoneMount_UpdateMacro()
   end)
 
-  local btnCtrl = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-  btnCtrl:SetSize(26,26)
-  btnCtrl:SetHitRectInsets(-2,-60,-2,-2)
-  btnCtrl.text:SetText('  Ctrl')
-  btnCtrl.text:SetFontObject("GameFontNormal")
-  btnCtrl:SetPoint('TOPLEFT', 140, y)
-  btnCtrl:SetChecked(zoneMountSettings.ctrlSwitchStyle)
-  btnCtrl:SetScript("OnClick",function() 
-    local isCheckedCtrl = btnCtrl:GetChecked()
+  ZoneMount_btnCtrl = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnCtrl:SetSize(26,26)
+  ZoneMount_btnCtrl:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnCtrl.text:SetText('  Ctrl')
+  ZoneMount_btnCtrl.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnCtrl:SetPoint('TOPLEFT', 140, y)
+  ZoneMount_btnCtrl:SetChecked(zoneMountSettings.ctrlSwitchStyle)
+  ZoneMount_btnCtrl:SetScript("OnClick",function() 
+    local isCheckedCtrl = ZoneMount_btnCtrl:GetChecked()
     zoneMountSettings.ctrlSwitchStyle = isCheckedCtrl
+    if isCheckedCtrl then
+      zoneMountSettings.ctrlUseGround = false
+      ZoneMount_btnCtrl2:SetChecked(false)
+    end
     ZoneMount_UpdateMacro()
   end)
 
-  local btnAlt = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-  btnAlt:SetSize(26,26)
-  btnAlt:SetHitRectInsets(-2,-60,-2,-2)
-  btnAlt.text:SetText('  Alt')
-  btnAlt.text:SetFontObject("GameFontNormal")
-  btnAlt:SetPoint('TOPLEFT', 240, y)
-  btnAlt:SetChecked(zoneMountSettings.altSwitchStyle)
-  btnAlt:SetScript("OnClick",function() 
-    local isCheckedAlt = btnAlt:GetChecked()
+  ZoneMount_btnAlt = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnAlt:SetSize(26,26)
+  ZoneMount_btnAlt:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnAlt.text:SetText('  Alt')
+  ZoneMount_btnAlt.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnAlt:SetPoint('TOPLEFT', 240, y)
+  ZoneMount_btnAlt:SetChecked(zoneMountSettings.altSwitchStyle)
+  ZoneMount_btnAlt:SetScript("OnClick",function() 
+    local isCheckedAlt = ZoneMount_btnAlt:GetChecked()
     zoneMountSettings.altSwitchStyle = isCheckedAlt
+    if isCheckedAlt then
+      zoneMountSettings.altUseGround = false
+      ZoneMount_btnAlt2:SetChecked(false)
+    end
     ZoneMount_UpdateMacro()
   end)
   y = y - 40
-
-  local shiftInfo4 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
-  shiftInfo4:SetJustifyV('TOP')
-  shiftInfo4:SetJustifyH('LEFT')
-  shiftInfo4:SetPoint('TOPLEFT', 40, y)
-  shiftInfo4:SetText('The unchecked modifiers can be used to summon a ground mount no matter where you are.')
-  y = y - 16
-
-  local shiftInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
-  shiftInfo2:SetJustifyV('TOP')
-  shiftInfo2:SetJustifyH('LEFT')
-  shiftInfo2:SetPoint('TOPLEFT', 40, y)
-  shiftInfo2:SetText('If your level is 10 - 19, you can skyride but not steady fly.')
-  y = y - 16
 
   local shiftInfo3 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   shiftInfo3:SetJustifyV('TOP')
   shiftInfo3:SetJustifyH('LEFT')
   shiftInfo3:SetPoint('TOPLEFT', 40, y)
-  shiftInfo3:SetText('For these levels, all modifiers will summon a ground mount.')
-  y = y - 50
+  shiftInfo3:SetText('Select the modifiers to summon a ground mount:')
+  y = y - 16
+
+  ZoneMount_btnShift2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnShift2:SetSize(26,26)
+  ZoneMount_btnShift2:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnShift2.text:SetText('  Shift')
+  ZoneMount_btnShift2.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnShift2:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnShift2:SetChecked(zoneMountSettings.shiftUseGround)
+  ZoneMount_btnShift2:SetScript("OnClick",function() 
+    local isCheckedShift = ZoneMount_btnShift2:GetChecked()
+    zoneMountSettings.shiftUseGround = isCheckedShift
+    if isCheckedShift then
+      zoneMountSettings.shiftSwitchStyle = false
+      ZoneMount_btnShift:SetChecked(false)
+    end
+    ZoneMount_UpdateMacro()
+  end)
+
+  ZoneMount_btnCtrl2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnCtrl2:SetSize(26,26)
+  ZoneMount_btnCtrl2:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnCtrl2.text:SetText('  Ctrl')
+  ZoneMount_btnCtrl2.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnCtrl2:SetPoint('TOPLEFT', 140, y)
+  ZoneMount_btnCtrl2:SetChecked(zoneMountSettings.ctrlUseGround)
+  ZoneMount_btnCtrl2:SetScript("OnClick",function() 
+    local isCheckedCtrl = ZoneMount_btnCtrl2:GetChecked()
+    zoneMountSettings.ctrlUseGround = isCheckedCtrl
+    if isCheckedCtrl then
+      zoneMountSettings.ctrlSwitchStyle = false
+      ZoneMount_btnCtrl:SetChecked(false)
+    end
+    ZoneMount_UpdateMacro()
+  end)
+
+  ZoneMount_btnAlt2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnAlt2:SetSize(26,26)
+  ZoneMount_btnAlt2:SetHitRectInsets(-2,-60,-2,-2)
+  ZoneMount_btnAlt2.text:SetText('  Alt')
+  ZoneMount_btnAlt2.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnAlt2:SetPoint('TOPLEFT', 240, y)
+  ZoneMount_btnAlt2:SetChecked(zoneMountSettings.altUseGround)
+  ZoneMount_btnAlt2:SetScript("OnClick",function() 
+    local isCheckedAlt = ZoneMount_btnAlt2:GetChecked()
+    zoneMountSettings.altUseGround = isCheckedAlt
+    if isCheckedAlt then
+      zoneMountSettings.altSwitchStyle = false
+      ZoneMount_btnAlt:SetChecked(false)
+    end
+    ZoneMount_UpdateMacro()
+  end)
+  y = y - 60
+
+  -- local shiftInfo2 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  -- shiftInfo2:SetJustifyV('TOP')
+  -- shiftInfo2:SetJustifyH('LEFT')
+  -- shiftInfo2:SetPoint('TOPLEFT', 40, y)
+  -- shiftInfo2:SetText('If your level is 10 - 19, you can skyride but not steady fly.')
+  -- y = y - 40
 
   local druidInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   druidInfo1:SetJustifyV('TOP')
@@ -182,8 +246,8 @@ function ZoneMount_addInterfaceOptions()
   druidInfo3:SetJustifyV('TOP')
   druidInfo3:SetJustifyH('LEFT')
   druidInfo3:SetPoint('TOPLEFT', 40, y)
-  druidInfo3:SetText('Duplicate the ZoneMount macro and insert this line at the start:')
-  y = y - 24
+  druidInfo3:SetText('duplicate the ZoneMount macro and insert this line at the start:')
+  y = y - 20
 
   local druidInfo4 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   druidInfo4:SetJustifyV('TOP')

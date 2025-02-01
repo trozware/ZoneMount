@@ -55,8 +55,11 @@ function ZoneMount:Initialize()
       hideWarnings = false,
       ignores = {},
       shiftSwitchStyle = true,
-      ctrlSwitchStyle = true,
-      altSwitchStyle = true,
+      ctrlSwitchStyle = false,
+      altSwitchStyle = false,
+      shiftUseGround = false,
+      ctrlUseGround = false,
+      altUseGround = true,
       padZoneList = true
 		}
   end
@@ -107,7 +110,7 @@ end
 
 function ZoneMount_ShowWelcome()
   local v = C_AddOns.GetAddOnMetadata("ZoneMount", "Version") 
-  local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm help |c0000FFFFfor help."
+  local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm |c0000FFFFfor help."
   ZoneMount_DisplayMessage(msg, false)
 end
 
@@ -256,9 +259,13 @@ function ZoneMount_DisplayHelp()
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Shift, Alt or Ctrl while clicking the macro to toggle skyriding."
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Shift while clicking the macro to toggle skyriding."
+  ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Alt while clicking the macro to summon a ground mount."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
+  ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFGo to Game menu - Options - Addons - ZoneMount to change settings."
   ChatFrame1:AddMessage(msg)
 end
 

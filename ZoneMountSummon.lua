@@ -365,7 +365,7 @@ end
 function ZoneMount_TypeOfMountToSummon()
   if IsIndoors() then
     return 'none'
-  elseif IsModifierKeyDown() then
+  elseif ZoneMount_ShouldUseGroundMount() then
     return 'ground'
   elseif ZoneMount_IsUnderwater() then
     return 'water'
@@ -387,6 +387,18 @@ function ZoneMount_TypeOfMountToSummon()
     return 'water'
   else
     return 'ground'
+  end
+end
+
+function ZoneMount_ShouldUseGroundMount()
+  if zoneMountSettings.shiftUseGround and IsShiftKeyDown() then
+    return true
+  elseif zoneMountSettings.ctrlUseGround and IsControlKeyDown() then
+    return true
+  elseif zoneMountSettings.altUseGround and IsAltKeyDown() then
+    return true
+  else
+    return false
   end
 end
 
