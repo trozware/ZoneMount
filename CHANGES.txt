@@ -1,3 +1,4 @@
+- v 2.0.3: Added option to reset all settings to the defaults, and fixed modifier conflicts.
 - v 2.0.2: Set default modifiers to Shift for flight mode and Alt for ground mounts.
 - v 2.0.1: Added option to choose modifier to summon a ground mount.
 - v 2.0.0: Updated for 11.0.7. Added option to choose modifiers keys for steady flight/skyriding toggle. Added option to turn off choosing non-zone mounts if you only have one for the zone.

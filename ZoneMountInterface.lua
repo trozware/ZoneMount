@@ -18,80 +18,79 @@ function ZoneMount_addInterfaceOptions()
   Title:SetText('ZoneMount v' .. v)
   y = y - 44
 
-  local btnFT = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-  local btnSlow = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-
-	btnFT:SetSize(26,26)
-	btnFT:SetHitRectInsets(-2,-200,-2,-2)
-	btnFT.text:SetText('  Show mount info in Chat')
-	btnFT.text:SetFontObject("GameFontNormal")
-  btnFT:SetPoint('TOPLEFT', 40, y)
-  btnFT:SetChecked(not zoneMountSettings.hideInfo)
-  btnFT:SetScript("OnClick",function() 
-    local isChecked = btnFT:GetChecked()
+  ZoneMount_btnShowChat = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	ZoneMount_btnShowChat:SetSize(26,26)
+	ZoneMount_btnShowChat:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnShowChat.text:SetText('  Show mount info in Chat')
+	ZoneMount_btnShowChat.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnShowChat:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnShowChat:SetChecked(not zoneMountSettings.hideInfo)
+  ZoneMount_btnShowChat:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnShowChat:GetChecked()
     zoneMountSettings.hideInfo = not isChecked
-    btnSlow:SetEnabled(not zoneMountSettings.hideInfo)
+    ZoneMount_btnSlowChat:SetEnabled(not zoneMountSettings.hideInfo)
     if zoneMountSettings.hideInfo then
-      btnSlow.text:SetFontObject("GameFontDisable")
+      ZoneMount_btnSlowChat.text:SetFontObject("GameFontDisable")
     else
-      btnSlow.text:SetFontObject("GameFontNormal")
+      ZoneMount_btnSlowChat.text:SetFontObject("GameFontNormal")
     end
   end)
   y = y - 40
-
-  btnSlow:SetSize(26,26)
-	btnSlow:SetHitRectInsets(-2,-200,-2,-2)
-	btnSlow.text:SetText('  Not more than once every 3 minutes')
-  btnSlow:SetPoint('TOPLEFT', 80, y)
-  btnSlow:SetChecked(zoneMountSettings.slowInfo)
-  btnSlow:SetEnabled(not zoneMountSettings.hideInfo)
+  
+  ZoneMount_btnSlowChat = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+  ZoneMount_btnSlowChat:SetSize(26,26)
+	ZoneMount_btnSlowChat:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnSlowChat.text:SetText('  Not more than once every 3 minutes')
+  ZoneMount_btnSlowChat:SetPoint('TOPLEFT', 80, y)
+  ZoneMount_btnSlowChat:SetChecked(zoneMountSettings.slowInfo)
+  ZoneMount_btnSlowChat:SetEnabled(not zoneMountSettings.hideInfo)
   if zoneMountSettings.hideInfo then
-    btnSlow.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnSlowChat.text:SetFontObject("GameFontDisable")
   else
-    btnSlow.text:SetFontObject("GameFontNormal")
+    ZoneMount_btnSlowChat.text:SetFontObject("GameFontNormal")
   end
-  btnSlow:SetScript("OnClick",function() 
-    local isChecked = btnSlow:GetChecked()
+  ZoneMount_btnSlowChat:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnSlowChat:GetChecked()
     zoneMountSettings.slowInfo = isChecked
     ZoneMount_LastChatReport = 0
   end)
   y = y - 40
 
-  local btnWarn = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-	btnWarn:SetSize(26,26)
-	btnWarn:SetHitRectInsets(-2,-200,-2,-2)
-	btnWarn.text:SetText('  Show warnings in Chat')
-	btnWarn.text:SetFontObject("GameFontNormal")
-  btnWarn:SetPoint('TOPLEFT', 40, y)
-  btnWarn:SetChecked(not zoneMountSettings.hideWarnings)
-  btnWarn:SetScript("OnClick",function() 
-    local isChecked = btnWarn:GetChecked()
+  ZoneMount_btnWarn = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	ZoneMount_btnWarn:SetSize(26,26)
+	ZoneMount_btnWarn:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnWarn.text:SetText('  Show warnings in Chat')
+	ZoneMount_btnWarn.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnWarn:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnWarn:SetChecked(not zoneMountSettings.hideWarnings)
+  ZoneMount_btnWarn:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnWarn:GetChecked()
     zoneMountSettings.hideWarnings = not isChecked
   end)
   y = y - 40
 
-  local btn2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-	btn2:SetSize(26,26)
-	btn2:SetHitRectInsets(-2,-200,-2,-2)
-	btn2.text:SetText('  Select from Favorites only')
-	btn2.text:SetFontObject("GameFontNormal")
-  btn2:SetPoint('TOPLEFT', 40, y)
-  btn2:SetChecked(zoneMountSettings.favsOnly)
-  btn2:SetScript("OnClick",function() 
-    local isChecked = btn2:GetChecked()
+  ZoneMount_btnFavs = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	ZoneMount_btnFavs:SetSize(26,26)
+	ZoneMount_btnFavs:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnFavs.text:SetText('  Select from Favorites only')
+	ZoneMount_btnFavs.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnFavs:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnFavs:SetChecked(zoneMountSettings.favsOnly)
+  ZoneMount_btnFavs:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnFavs:GetChecked()
     zoneMountSettings.favsOnly = isChecked
   end)
   y = y - 40
   
-  local btnPad = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
-	btnPad:SetSize(26,26)
-	btnPad:SetHitRectInsets(-2,-200,-2,-2)
-	btnPad.text:SetText('  Choose non-zone mounts sometimes,')
-	btnPad.text:SetFontObject("GameFontNormal")
-  btnPad:SetPoint('TOPLEFT', 40, y)
-  btnPad:SetChecked(zoneMountSettings.padZoneList)
-  btnPad:SetScript("OnClick",function() 
-    local isChecked = btnPad:GetChecked()
+  ZoneMount_btnPad = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	ZoneMount_btnPad:SetSize(26,26)
+	ZoneMount_btnPad:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnPad.text:SetText('  Choose non-zone mounts sometimes,')
+	ZoneMount_btnPad.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnPad:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnPad:SetChecked(zoneMountSettings.padZoneList)
+  ZoneMount_btnPad:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnPad:GetChecked()
     zoneMountSettings.padZoneList = isChecked
   end)
   y = y - 24
@@ -117,6 +116,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnShift.text:SetFontObject("GameFontNormal")
   ZoneMount_btnShift:SetPoint('TOPLEFT', 40, y)
   ZoneMount_btnShift:SetChecked(zoneMountSettings.shiftSwitchStyle)
+  ZoneMount_btnShift:SetEnabled(not zoneMountSettings.shiftUseGround)
+  if zoneMountSettings.shiftUseGround then
+    ZoneMount_btnShift.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnShift.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnShift:SetScript("OnClick",function() 
     local isCheckedShift = ZoneMount_btnShift:GetChecked()
     zoneMountSettings.shiftSwitchStyle = isCheckedShift
@@ -124,7 +129,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.shiftUseGround = false
       ZoneMount_btnShift2:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
 
   ZoneMount_btnCtrl = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
@@ -134,6 +139,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnCtrl.text:SetFontObject("GameFontNormal")
   ZoneMount_btnCtrl:SetPoint('TOPLEFT', 140, y)
   ZoneMount_btnCtrl:SetChecked(zoneMountSettings.ctrlSwitchStyle)
+  ZoneMount_btnCtrl:SetEnabled(not zoneMountSettings.ctrlUseGround)
+  if zoneMountSettings.ctrlUseGround then
+    ZoneMount_btnCtrl.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnCtrl.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnCtrl:SetScript("OnClick",function() 
     local isCheckedCtrl = ZoneMount_btnCtrl:GetChecked()
     zoneMountSettings.ctrlSwitchStyle = isCheckedCtrl
@@ -141,7 +152,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.ctrlUseGround = false
       ZoneMount_btnCtrl2:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
 
   ZoneMount_btnAlt = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
@@ -151,6 +162,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnAlt.text:SetFontObject("GameFontNormal")
   ZoneMount_btnAlt:SetPoint('TOPLEFT', 240, y)
   ZoneMount_btnAlt:SetChecked(zoneMountSettings.altSwitchStyle)
+  ZoneMount_btnAlt:SetEnabled(not zoneMountSettings.altUseGround)
+  if zoneMountSettings.altUseGround then
+    ZoneMount_btnAlt.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnAlt.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnAlt:SetScript("OnClick",function() 
     local isCheckedAlt = ZoneMount_btnAlt:GetChecked()
     zoneMountSettings.altSwitchStyle = isCheckedAlt
@@ -158,7 +175,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.altUseGround = false
       ZoneMount_btnAlt2:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
   y = y - 40
 
@@ -176,6 +193,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnShift2.text:SetFontObject("GameFontNormal")
   ZoneMount_btnShift2:SetPoint('TOPLEFT', 40, y)
   ZoneMount_btnShift2:SetChecked(zoneMountSettings.shiftUseGround)
+  ZoneMount_btnShift2:SetEnabled(not zoneMountSettings.shiftSwitchStyle)
+  if zoneMountSettings.shiftSwitchStyle then
+    ZoneMount_btnShift2.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnShift2.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnShift2:SetScript("OnClick",function() 
     local isCheckedShift = ZoneMount_btnShift2:GetChecked()
     zoneMountSettings.shiftUseGround = isCheckedShift
@@ -183,7 +206,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.shiftSwitchStyle = false
       ZoneMount_btnShift:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
 
   ZoneMount_btnCtrl2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
@@ -193,6 +216,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnCtrl2.text:SetFontObject("GameFontNormal")
   ZoneMount_btnCtrl2:SetPoint('TOPLEFT', 140, y)
   ZoneMount_btnCtrl2:SetChecked(zoneMountSettings.ctrlUseGround)
+  ZoneMount_btnCtrl2:SetEnabled(not zoneMountSettings.ctrlSwitchStyle)
+  if zoneMountSettings.ctrlSwitchStyle then
+    ZoneMount_btnCtrl2.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnCtrl2.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnCtrl2:SetScript("OnClick",function() 
     local isCheckedCtrl = ZoneMount_btnCtrl2:GetChecked()
     zoneMountSettings.ctrlUseGround = isCheckedCtrl
@@ -200,7 +229,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.ctrlSwitchStyle = false
       ZoneMount_btnCtrl:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
 
   ZoneMount_btnAlt2 = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
@@ -210,6 +239,12 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_btnAlt2.text:SetFontObject("GameFontNormal")
   ZoneMount_btnAlt2:SetPoint('TOPLEFT', 240, y)
   ZoneMount_btnAlt2:SetChecked(zoneMountSettings.altUseGround)
+  ZoneMount_btnAlt2:SetEnabled(not zoneMountSettings.altSwitchStyle)
+  if zoneMountSettings.altSwitchStyle then
+    ZoneMount_btnAlt2.text:SetFontObject("GameFontDisable")
+  else
+    ZoneMount_btnAlt2.text:SetFontObject("GameFontNormal")
+  end
   ZoneMount_btnAlt2:SetScript("OnClick",function() 
     local isCheckedAlt = ZoneMount_btnAlt2:GetChecked()
     zoneMountSettings.altUseGround = isCheckedAlt
@@ -217,7 +252,7 @@ function ZoneMount_addInterfaceOptions()
       zoneMountSettings.altSwitchStyle = false
       ZoneMount_btnAlt:SetChecked(false)
     end
-    ZoneMount_UpdateMacro()
+    ZoneMount_UpdateInterfaceModifiers()
   end)
   y = y - 60
 
@@ -296,6 +331,18 @@ function ZoneMount_addInterfaceOptions()
   ZoneMount_ignoresList:SetWidth(120)
   ZoneMount_ignoresList:SetPoint('TOPLEFT', 440, y)
   ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+  y = y - 40
+  
+  local resetBtn = CreateFrame("Button", nil, ZoneMount.panel, "UIPanelButtonTemplate")
+	resetBtn:SetSize(100,26)
+	resetBtn:SetText('Reset Settings to Defaults')
+  resetBtn:SetPoint('TOPLEFT', 40, -550)
+  resetBtn:SetWidth(200)
+  resetBtn.tooltipTitle = 'Reset all settings to the defaults.'
+  resetBtn.tooltipBody = 'All the settings here will be reset to the defaults.'
+  resetBtn:SetScript("OnClick",function() 
+    ZoneMount_ResetSettings()
+  end)
 end
 
 function ZoneMount_IgnoreMount(name)
@@ -361,4 +408,93 @@ function ZoneMount_ListIgnores()
     return 'Type a name or partial name above to ignore any mount whose name contains that text (case-insensitive).\n\nEnter the same text again to remove it from the list.'
   end
   return ignoreText 
+end
+
+function ZoneMount_ResetSettings()
+  zoneMountSettings.resetCounter = 0
+  ZoneMount_ApplyDefaultSettings()
+  zoneMountSettings.ignores = {}
+  ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+
+  ZoneMount_btnShowChat:SetChecked(not zoneMountSettings.hideInfo)
+  ZoneMount_btnSlowChat:SetChecked(zoneMountSettings.slowInfo)
+  ZoneMount_btnWarn:SetChecked(not zoneMountSettings.hideWarnings)
+  ZoneMount_btnFavs:SetChecked(zoneMountSettings.favsOnly)
+  ZoneMount_btnPad:SetChecked(zoneMountSettings.padZoneList)
+
+  ZoneMount_UpdateInterfaceModifiers()
+  ZoneMount_UpdateMacro()
+end
+
+function ZoneMount_UpdateInterfaceModifiers()
+  if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
+    zoneMountSettings.shiftSwitchStyle = true
+    zoneMountSettings.shiftUseGround = false
+  end
+  if zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and zoneMountSettings.altUseGround == false then
+    zoneMountSettings.altUseGround = true
+    zoneMountSettings.altSwitchStyle = false
+
+    -- repeat first check to trap if the second check was triggered
+    if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
+      zoneMountSettings.shiftSwitchStyle = true
+      zoneMountSettings.shiftUseGround = false
+    end
+  end
+
+  ZoneMount_btnShift:SetChecked(zoneMountSettings.shiftSwitchStyle)
+  ZoneMount_btnShift:SetEnabled(not zoneMountSettings.shiftUseGround)
+  if zoneMountSettings.shiftUseGround then
+    ZoneMount_btnShift.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnShift:SetChecked(false)
+  else
+    ZoneMount_btnShift.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_btnCtrl:SetChecked(zoneMountSettings.ctrlSwitchStyle)
+  ZoneMount_btnCtrl:SetEnabled(not zoneMountSettings.ctrlUseGround)
+  if zoneMountSettings.ctrlUseGround then
+    ZoneMount_btnCtrl.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnCtrl:SetChecked(false)
+  else
+    ZoneMount_btnCtrl.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_btnAlt:SetChecked(zoneMountSettings.altSwitchStyle)
+  ZoneMount_btnAlt:SetEnabled(not zoneMountSettings.altUseGround)
+  if zoneMountSettings.altUseGround then
+    ZoneMount_btnAlt.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnAlt:SetChecked(false)
+  else
+    ZoneMount_btnAlt.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_btnShift2:SetChecked(zoneMountSettings.shiftUseGround)
+  ZoneMount_btnShift2:SetEnabled(not zoneMountSettings.shiftSwitchStyle)
+  if zoneMountSettings.shiftSwitchStyle then
+    ZoneMount_btnShift2.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnShift2:SetChecked(false)
+  else
+    ZoneMount_btnShift2.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_btnCtrl2:SetChecked(zoneMountSettings.ctrlUseGround)
+  ZoneMount_btnCtrl2:SetEnabled(not zoneMountSettings.ctrlSwitchStyle)
+  if zoneMountSettings.ctrlSwitchStyle then
+    ZoneMount_btnCtrl2.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnCtrl2:SetChecked(false)
+  else
+    ZoneMount_btnCtrl2.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_btnAlt2:SetChecked(zoneMountSettings.altUseGround)
+  ZoneMount_btnAlt2:SetEnabled(not zoneMountSettings.altSwitchStyle)
+  if zoneMountSettings.altSwitchStyle then
+    ZoneMount_btnAlt2.text:SetFontObject("GameFontDisable")
+    ZoneMount_btnAlt2:SetChecked(false)
+  else
+    ZoneMount_btnAlt2.text:SetFontObject("GameFontNormal")
+  end
+
+  ZoneMount_UpdateMacro()
 end

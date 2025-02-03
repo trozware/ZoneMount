@@ -60,7 +60,8 @@ function ZoneMount:Initialize()
       shiftUseGround = false,
       ctrlUseGround = false,
       altUseGround = true,
-      padZoneList = true
+      padZoneList = true,
+      resetCounter = 0
 		}
   end
 
@@ -69,14 +70,41 @@ function ZoneMount:Initialize()
   end
 
   if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
-    zoneMountSettings.shiftSwitchStyle = true
+    zoneMountSettings.resetCounter = 0
+    ZoneMount_ApplyDefaultSettings()
   end
 
   if zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and zoneMountSettings.altUseGround == false then
-    zoneMountSettings.altUseGround = true
+    zoneMountSettings.resetCounter = 0
+    ZoneMount_ApplyDefaultSettings()
   end
 
+  ZoneMount_ApplyDefaultSettings()
   ZoneMount_addInterfaceOptions()
+end
+
+function ZoneMount_ApplyDefaultSettings()
+  if zoneMountSettings.resetCounter == nil then
+    zoneMountSettings.resetCounter = 0
+  end
+  if zoneMountSettings.resetCounter > 0 then
+    return
+  end
+
+  zoneMountSettings.favsOnly = false
+  zoneMountSettings.hideInfo = false
+  zoneMountSettings.slowInfo = false
+  zoneMountSettings.hideWarnings = false
+  zoneMountSettings.shiftSwitchStyle = true
+  zoneMountSettings.ctrlSwitchStyle = false
+  zoneMountSettings.altSwitchStyle = false
+  zoneMountSettings.shiftUseGround = false
+  zoneMountSettings.ctrlUseGround = false
+  zoneMountSettings.altUseGround = true
+  zoneMountSettings.padZoneList = true
+  zoneMountSettings.resetCounter = zoneMountSettings.resetCounter + 1 
+
+  ZoneMount_DisplayMessage('ZoneMount settings have been reset to the defaults.', true)
 end
 
 function ZoneMountCommandHandler(msg) 
