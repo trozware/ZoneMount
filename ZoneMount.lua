@@ -38,7 +38,6 @@ ZoneMount_EventFrame:SetScript("OnEvent",
       -- print('Mount changed event')
     elseif event == "PLAYER_LOGIN" then
       ZoneMount_ShowWelcome()
-      ZoneMount_UpdateMacro()
     end  
   end
 )
@@ -81,6 +80,8 @@ function ZoneMount:Initialize()
 
   ZoneMount_ApplyDefaultSettings()
   ZoneMount_addInterfaceOptions()
+
+  ZoneMount_UpdateMacro()
 end
 
 function ZoneMount_ApplyDefaultSettings()

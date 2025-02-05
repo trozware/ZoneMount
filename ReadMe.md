@@ -51,6 +51,7 @@ To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type 
 
 ### Version History
 
+- v 2.0.4: Stopped random "t" from appearing in the chat log.
 - v 2.0.3: Added option to reset all settings to the defaults, and fixed modifier conflicts.
 - v 2.0.2: Set default modifiers to Shift for flight mode and Alt for ground mounts.
 - v 2.0.1: Added option to choose modifier to summon a ground mount.
