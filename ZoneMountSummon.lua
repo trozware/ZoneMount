@@ -220,8 +220,10 @@ function ZoneMount_LookForMount()
 
   if #zone_mounts == 0 then
     zone_mounts = valid_mounts
-    local special_index = math.random(#special_mounts)
-    zone_mounts[#zone_mounts + 1] = special_mounts[special_index]
+    if #special_mounts > 0 then
+      local special_index = math.random(#special_mounts)
+      zone_mounts[#zone_mounts + 1] = special_mounts[special_index]
+    end
   end
 
   debug_report = debug_report .. 'choosing randomly from ' .. #zone_mounts .. ' possible mounts...'
