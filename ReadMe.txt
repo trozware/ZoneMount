@@ -37,6 +37,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 2.0.6: Updated for 11.0.1.
 v 2.0.5: Fixed Lua error when no purchased or event mounts are found.
 v 2.0.4: Stopped random "t" from appearing in the chat log.
 v 2.0.3: Added option to reset all settings to the defaults, and fixed modifier conflicts.
