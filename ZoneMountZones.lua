@@ -162,6 +162,16 @@ function ZoneMount_IsInRemix()
   end
 end
 
+function ZoneMount_IsInUndermine()
+  local zone_names = ZoneMount_ZoneNames()
+  for n = 1, #zone_names do
+    if zone_names[n] == 'Undermine' then
+      return true
+    end
+  end
+  return false
+end
+
 -- /dump C_Spell.GetSpellInfo(449026)
 -- /dump ZoneMount_HasRadiantLight()
 function ZoneMount_HasRadiantLight()

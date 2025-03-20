@@ -377,7 +377,11 @@ function ZoneMount_TypeOfMountToSummon()
     else
       return 'flying'
     end
-  elseif IsFlyableArea() and (UnitLevel("player") >= 10 or ZoneMount_IsInRemix()) then
+  elseif IsFlyableArea() == false then
+    return 'ground'
+  elseif IsFlyableArea() and UnitLevel("player") >= 10 then
+    return 'flying'
+  elseif ZoneMount_IsInRemix() then
     return 'flying'
   elseif UnitLevel("player") >= 70 and ZoneMount_HasWarWithinPathfinder() then
     return 'flying'
@@ -479,4 +483,14 @@ function ZoneMount_RightMountType(required_type, type_id, isSteadyFlight)
   else
     return false
   end
+end
+
+function ZoneMount_CanUseUndermineMount()
+  -- /dump C_Spell.GetSpellInfo("G-99 Breakneck")
+  local spellID = 460013
+  local isUsable = C_Spell.IsSpellUsable(spellID)
+  if isUsable == true and ZoneMount_IsInUndermine() then
+    return true
+  end
+  return false
 end

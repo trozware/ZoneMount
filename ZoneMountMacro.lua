@@ -48,6 +48,12 @@ function ZoneMount_MacroText()
     canSwitch = ZoneMount_HasWarWithinPathfinder()
   end
 
+  local canBreakneck = ZoneMount_CanUseUndermineMount()
+  local breakneckText = ''
+  if canBreakneck then
+    breakneckText = "/cast G-99 Breakneck\n"
+  end
+
   if canSwitch then
     local mods = ''
     if zoneMountSettings.shiftSwitchStyle then
@@ -59,9 +65,9 @@ function ZoneMount_MacroText()
     if zoneMountSettings.altSwitchStyle then
       mods = mods .. '[mod:alt,noflying]'
     end
-    local macroText = "/quietcast\n/cast " .. mods .. " Switch Flight Style\n/zm mount"
+    local macroText = "/quietcast\n/cast " .. mods .. " Switch Flight Style\n" .. breakneckText .. "/zm mount"
     return macroText
   end
-  local macroText = "/zm mount"
+  local macroText = "/quietcast\n" .. breakneckText .. "/zm mount"
   return macroText
 end

@@ -51,6 +51,7 @@ To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type 
 
 ### Version History
 
+- v 2.1.0: Will try to use G-99 Breakneck in Undermine.
 - v 2.0.6: Updated for 11.0.1.
 - v 2.0.5: Fixed Lua error when no purchased or event mounts are found.
 - v 2.0.4: Stopped random "t" from appearing in the chat log.

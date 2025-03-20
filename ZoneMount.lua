@@ -20,6 +20,8 @@ local ZoneMount_EventFrame = CreateFrame("Frame")
 ZoneMount_EventFrame:RegisterEvent("VARIABLES_LOADED")
 ZoneMount_EventFrame:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
 ZoneMount_EventFrame:RegisterEvent("PLAYER_LOGIN")
+ZoneMount_EventFrame:RegisterEvent("ZONE_CHANGED")
+ZoneMount_EventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
 ZoneMount_LastSummon = nil
 ZoneMount_LastSummonTime = 0
@@ -38,6 +40,9 @@ ZoneMount_EventFrame:SetScript("OnEvent",
       -- print('Mount changed event')
     elseif event == "PLAYER_LOGIN" then
       ZoneMount_ShowWelcome()
+      ZoneMount_UpdateMacro()
+    elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_NEW_AREA" then
+      ZoneMount_UpdateMacro()
     end  
   end
 )
