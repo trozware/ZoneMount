@@ -377,13 +377,11 @@ function ZoneMount_TypeOfMountToSummon()
     else
       return 'flying'
     end
-  elseif IsFlyableArea() == false then
+  elseif IsFlyableArea() == false and IsAdvancedFlyableArea() == false then
     return 'ground'
   elseif IsFlyableArea() and UnitLevel("player") >= 10 then
     return 'flying'
   elseif ZoneMount_IsInRemix() then
-    return 'flying'
-  elseif UnitLevel("player") >= 70 and ZoneMount_HasWarWithinPathfinder() then
     return 'flying'
   elseif ZoneMount_CanSkyride() then
     return 'flying'
