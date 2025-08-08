@@ -1,17 +1,25 @@
 function ZoneMount_Tests()
-  -- ZoneMount_clearFilters()
+  ZoneMount_clearFilters()
   -- C_MountJournal.SetCollectedFilterSetting(2, true)
   -- C_MountJournal.SetCollectedFilterSetting(3, true)
 
-  -- local num_mounts = C_MountJournal.GetNumDisplayedMounts()
+  C_MountJournal.SetAllTypeFilters(true)
+  C_MountJournal.SetTypeFilter(1, false)
+  C_MountJournal.SetTypeFilter(2, false)
+  C_MountJournal.SetTypeFilter(3, false)
+  C_MountJournal.SetTypeFilter(4, true)
+
+  local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
   -- local valid_mounts = ZoneMount_ValidMounts()
   -- print('Number of valid mounts = ', #valid_mounts)
 
-  -- for n = 1, num_mounts do
-  --   local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-  --     isFactionSpecific, faction, hideOnChar, isCollected, mountID, isSteadyFlight = 
-  --     C_MountJournal.GetDisplayedMountInfo(n)
+  print('Number of filtered mounts = ', num_mounts)
+
+  for n = 1, num_mounts do
+    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
+      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isSteadyFlight = 
+      C_MountJournal.GetDisplayedMountInfo(n)
   --     -- if isSteadyFlight == true then
   --     --   print('Name', creatureName)
   --     --   print('ID', mountID)
@@ -25,7 +33,7 @@ function ZoneMount_Tests()
   --   = C_MountJournal.GetMountInfoExtraByID(mountID)
     
   --   if mountTypeID == 231 then
-  --     print('Name', creatureName)
+        print('Name', creatureName)
   --     print('ID', mountID)
   --     print('Type', mountTypeID)
   --     print('Source type', sourceType)
@@ -81,5 +89,5 @@ function ZoneMount_Tests()
   --     --   end
   --     end
   --   end
-  -- end
+  end
 end

@@ -55,8 +55,9 @@ function ZoneMount_LookForMount()
   local secondary_mount_type = 'ground'
   if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 20 then
     secondary_mount_type = 'flying'
-  end 
-  -- end
+  elseif mount_type == 'ridealong' then
+    secondary_mount_type = 'flying'
+  end
 
   -- print('Looking for ', mount_type, 'mount')
   if mount_type == 'none' then
@@ -253,6 +254,8 @@ function ZoneMount_LookForMount()
   if ZoneMount_DebugMode == true then
     print(debug_report)
   end
+
+  ZoneMount_ChooseRideAlong = false
 end
 
 function ZoneMount_clearFilters()
@@ -268,8 +271,20 @@ function ZoneMount_clearFilters()
   C_MountJournal.SetCollectedFilterSetting(3, false)
 end
 
+function ZoneMount_FilterForRideAlong()
+  ZoneMount_clearFilters()
+
+  C_MountJournal.SetTypeFilter(1, false)
+  C_MountJournal.SetTypeFilter(2, false)
+  C_MountJournal.SetTypeFilter(3, false)
+end
+
 function ZoneMount_ValidMounts()
   ZoneMount_clearFilters()
+
+  if ZoneMount_ChooseRideAlong then
+    ZoneMount_FilterForRideAlong()
+  end
 
   local playerLevel = UnitLevel("player")
   local inMaw = ZoneMount_InTheMaw()
@@ -365,11 +380,13 @@ end
 
 -- /run print(ZoneMount_TypeOfMountToSummon())
 function ZoneMount_TypeOfMountToSummon()
-  if IsIndoors() then
+  if ZoneMount_ChooseRideAlong then
+    return 'ridealong'
+  elseif IsIndoors() then
     return 'none'
   elseif ZoneMount_ShouldUseGroundMount() then
     return 'ground'
-  elseif ZoneMount_IsUnderwater() then
+  elseif ZoneMount_IsUnderwater() or (ZoneMount_InVashjir() and IsSubmerged()) then
     return 'water'
   elseif UnitLevel("player") >= 10 and UnitLevel("player") < 20 then
     if IsModifierKeyDown() then

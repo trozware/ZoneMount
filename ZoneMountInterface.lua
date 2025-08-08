@@ -413,8 +413,8 @@ end
 function ZoneMount_ResetSettings()
   zoneMountSettings.resetCounter = 0
   ZoneMount_ApplyDefaultSettings()
-  zoneMountSettings.ignores = {}
-  ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
+  -- zoneMountSettings.ignores = {}
+  -- ZoneMount_ignoresList:SetText(ZoneMount_ListIgnores())
 
   ZoneMount_btnShowChat:SetChecked(not zoneMountSettings.hideInfo)
   ZoneMount_btnSlowChat:SetChecked(zoneMountSettings.slowInfo)

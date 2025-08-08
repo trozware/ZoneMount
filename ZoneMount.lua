@@ -30,6 +30,7 @@ ZoneMount_DebugMode = false
 ZoneMount_LastDismountCommand = nil
 ZoneMount_HasMacroInstalled = false
 ZoneMount_LastChatReport = 0
+ZoneMount_ChooseRideAlong = false
 
 ZoneMount_EventFrame:SetScript("OnEvent",
   function(self, event, ...)
@@ -118,6 +119,8 @@ function ZoneMountCommandHandler(msg)
       ZoneMount_MountOrDismount()
     elseif msg == 'macro' then
       ZoneMount_CreateMacro()
+    elseif msg == 'macro2' then
+      ZoneMount_CreateRideAlongMacro()
     elseif msg == 'about' then
       ZoneMount_DisplayInfo()
     elseif msg == 'do' or msg == 'act' then
@@ -133,6 +136,9 @@ function ZoneMountCommandHandler(msg)
       -- print('=========================')
     -- elseif msg == 'debug' then
     --   ZoneMount_ToggleDebugMode()
+    elseif msg == 'ra' or msg == 'ridealong' then
+      ZoneMount_ChooseRideAlong = true
+      ZoneMount_LookForMount()
     elseif msg == '' or msg == 'help' then
       ZoneMount_DisplayHelp()
     else
@@ -295,6 +301,8 @@ function ZoneMount_DisplayHelp()
   local msg
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm mount|c0000FFFF to summon an appropriate mount."
   ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm ra|c0000FFFF to summon a ride along mount."
+  ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm about|c0000FFFF to show some information about ZoneMount and your mount."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm _name_|c0000FFFF to search for a mount by name."
@@ -306,6 +314,8 @@ function ZoneMount_DisplayHelp()
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Alt while clicking the macro to summon a ground mount."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
+  ChatFrame1:AddMessage(msg)
+  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro2|c0000FFFF to create a ZoneMount Ride Along macro action button."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFGo to Game menu - Options - Addons - ZoneMount to change settings."
   ChatFrame1:AddMessage(msg)

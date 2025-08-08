@@ -37,6 +37,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 2.2.0: Added /zm ra command to summon a ride along mount or /zm macro2 to create a macro for it.
 v 2.1.1: updated for 11.1.5 & fixed bug where ground mounts were summoned in some areas.
 v 2.1.0: Will try to use the G-99 Breakneck in Undermine.
 v 2.0.6: Updated for 11.0.1.

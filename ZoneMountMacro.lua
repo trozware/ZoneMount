@@ -19,6 +19,26 @@ function ZoneMount_CreateMacro()
   end
 end
 
+function ZoneMount_CreateRideAlongMacro()
+  local existing_macro = GetMacroInfo('ZoneMount Ride Along')
+  if existing_macro then
+    ZoneMount_HasMacroInstalled = true
+    ZoneMount_DisplayMessage('Your ZoneMount Ride Along macro already exists. Drag it into your action bar for easy access.', true)
+    PickupMacro('ZoneMount Ride Along')
+    return
+  end
+
+  local macroText = "/zm ridealong"
+  local macro_id = CreateMacro("ZoneMount Ride Along", "132226", macroText, nil, nil);
+  if macro_id then
+    ZoneMount_HasMacroInstalled = true
+    ZoneMount_DisplayMessage('Your ZoneMount Ride Along macro has been created. Drag it into your action bar for easy access.', true)
+    PickupMacro('ZoneMount Ride Along')
+  else
+    ZoneMount_DisplayMessage('There was a problem creating your ZoneMount Ride Along macro.', true)
+  end
+end
+
 function ZoneMount_UpdateMacro()
   if InCombatLockdown() then
     return

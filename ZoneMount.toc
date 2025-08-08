@@ -1,7 +1,7 @@
 ## Title: Zone Mount
-## Interface: 110105
+## Interface: 110200
 ## Author: Sarah Reichelt
-## Version: 2.1.1
+## Version: 2.2.0
 
 ## SavedVariables: zoneMountSettings
 ## X-Category: Mounts
