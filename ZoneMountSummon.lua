@@ -18,17 +18,21 @@ function ZoneMount_MountOrDismount()
         ZoneMount_UpdateMacro()   -- in case Pathfinder achievement has been earned
       end
     elseif ZoneMount_HasMacroInstalled then
-      local now = GetTime()           -- time in seconds
-      if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
+      if zoneMountSettings.flightSafetyDisabled == true then 
         Dismount()
-      else
-        if not zoneMountSettings.hideWarnings then
-          local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
-          formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
-          ChatFrame1:AddMessage(formatted_msg)
-        end
+      else 
+        local now = GetTime()           -- time in seconds
+        if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
+          Dismount()
+        else
+          if not zoneMountSettings.hideWarnings then
+            local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
+            formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
+            ChatFrame1:AddMessage(formatted_msg)
+          end
 
-        ZoneMount_LastDismountCommand = now
+          ZoneMount_LastDismountCommand = now
+        end
       end
     else
       ZoneMount_LookForMount()

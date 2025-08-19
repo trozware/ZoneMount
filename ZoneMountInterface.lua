@@ -100,6 +100,26 @@ function ZoneMount_addInterfaceOptions()
   padInfo1:SetJustifyH('LEFT')
   padInfo1:SetPoint('TOPLEFT', 70, y)
   padInfo1:SetText(' if you only have one mount from this zone')
+  y = y - 40
+  
+  ZoneMount_btnSafe = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
+	ZoneMount_btnSafe:SetSize(26,26)
+	ZoneMount_btnSafe:SetHitRectInsets(-2,-200,-2,-2)
+	ZoneMount_btnSafe.text:SetText('  Disable flight-safety protocols,')
+	ZoneMount_btnSafe.text:SetFontObject("GameFontNormal")
+  ZoneMount_btnSafe:SetPoint('TOPLEFT', 40, y)
+  ZoneMount_btnSafe:SetChecked(zoneMountSettings.flightSafetyDisabled)
+  ZoneMount_btnSafe:SetScript("OnClick",function() 
+    local isChecked = ZoneMount_btnSafe:GetChecked()
+    zoneMountSettings.flightSafetyDisabled = isChecked
+  end)
+  y = y - 24
+
+  local padInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  safeInfo:SetJustifyV('TOP')
+  safeInfo:SetJustifyH('LEFT')
+  safeInfo:SetPoint('TOPLEFT', 70, y)
+  safeInfo:SetText(' Disabling allows you to instantly dismount on macro press')
   y = y - 60
 
   local shiftInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
@@ -421,6 +441,7 @@ function ZoneMount_ResetSettings()
   ZoneMount_btnWarn:SetChecked(not zoneMountSettings.hideWarnings)
   ZoneMount_btnFavs:SetChecked(zoneMountSettings.favsOnly)
   ZoneMount_btnPad:SetChecked(zoneMountSettings.padZoneList)
+  ZoneMount_btnSafe:SetChecked(zoneMountSettings.flightSafetyDisabled)
 
   ZoneMount_UpdateInterfaceModifiers()
   ZoneMount_UpdateMacro()

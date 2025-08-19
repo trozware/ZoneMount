@@ -66,6 +66,7 @@ function ZoneMount:Initialize()
       ctrlUseGround = false,
       altUseGround = true,
       padZoneList = true,
+      flightSafetyDisabled = false,
       resetCounter = 0
 		}
   end
