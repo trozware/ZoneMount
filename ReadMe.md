@@ -51,6 +51,7 @@ To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type 
 
 ### Version History
 
+- v 2.2.1: Added option to disable flight safety (thanks to @LuckyPhilDev for the PR).
 - v 2.2.0: Added /zm ra command to summon a ride along mount or /zm macro2 to create a macro for it.
 - v 2.1.1: Updated for 11.1.5 & fixed bug where ground mounts were summoned in some areas.
 - v 2.1.0: Will try to use G-99 Breakneck in Undermine.

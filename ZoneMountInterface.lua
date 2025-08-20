@@ -35,7 +35,7 @@ function ZoneMount_addInterfaceOptions()
       ZoneMount_btnSlowChat.text:SetFontObject("GameFontNormal")
     end
   end)
-  y = y - 40
+  y = y - 30
   
   ZoneMount_btnSlowChat = CreateFrame("CheckButton", nil, ZoneMount.panel, "UICheckButtonTemplate")
   ZoneMount_btnSlowChat:SetSize(26,26)
@@ -115,7 +115,7 @@ function ZoneMount_addInterfaceOptions()
   end)
   y = y - 24
 
-  local padInfo1 = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
+  local safeInfo = ZoneMount.panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormal')
   safeInfo:SetJustifyV('TOP')
   safeInfo:SetJustifyH('LEFT')
   safeInfo:SetPoint('TOPLEFT', 70, y)
@@ -356,7 +356,7 @@ function ZoneMount_addInterfaceOptions()
   local resetBtn = CreateFrame("Button", nil, ZoneMount.panel, "UIPanelButtonTemplate")
 	resetBtn:SetSize(100,26)
 	resetBtn:SetText('Reset Settings to Defaults')
-  resetBtn:SetPoint('TOPLEFT', 40, -550)
+  resetBtn:SetPoint('TOPLEFT', 40, -570)
   resetBtn:SetWidth(200)
   resetBtn.tooltipTitle = 'Reset all settings to the defaults.'
   resetBtn.tooltipBody = 'All the settings here will be reset to the defaults.'

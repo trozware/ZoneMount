@@ -110,6 +110,7 @@ function ZoneMount_ApplyDefaultSettings()
   zoneMountSettings.ctrlUseGround = false
   zoneMountSettings.altUseGround = true
   zoneMountSettings.padZoneList = true
+  zoneMountSettings.flightSafetyDisabled = false
   zoneMountSettings.resetCounter = zoneMountSettings.resetCounter + 1 
 
   ZoneMount_DisplayMessage('ZoneMount settings have been reset to the defaults.', true)
