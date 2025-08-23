@@ -208,6 +208,40 @@ function ZoneMount_HasRadiantLight()
   return false
 end
 
+function ZoneMount_HasSoaringReshii()
+  local soaringReshiiSpellID = 1235114
+  local soaringReshiiDebuffID = 1235114
+
+  if UnitLevel("player") < 80 then
+    return false
+  end
+
+  for i = 1, 100 do 
+    local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+    if aura == nil then
+      break
+    else
+      if aura.spellId and aura.spellId == soaringReshiiSpellID then
+        return true
+      end
+    end
+  end
+
+  for i = 1, 100 do 
+    local aura = C_TooltipInfo.GetUnitDebuff('player', i)
+
+    if aura == nil then
+      break
+    else
+      if aura.id and aura.id == soaringReshiiDebuffID then
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
 -- 40231 = War Within Pathfinder achievement
 function ZoneMount_HasWarWithinPathfinder()
   local achievementID = 40231

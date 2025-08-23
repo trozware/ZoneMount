@@ -458,7 +458,7 @@ function ZoneMount_ShouldLookForNewMount()
     return 'You are in a taxi.'
   end
 
-  if ZoneMount_HasRadiantLight() == true then
+  if ZoneMount_HasRadiantLight() == true or ZoneMount_HasSoaringReshii() == true then
     return 'yes'
   end
 
