@@ -262,3 +262,23 @@ function ZoneMount_CanSkyride()
   -- local isUsable = C_Spell.IsSpellUsable(spellID)
   -- return isUsable
 end
+
+function ZoneMount_IsPhaseDiving()
+  local zone_names = ZoneMount_ZoneNames()
+  for n = 1, #zone_names do
+    if zone_names[n] == "K'aresh" then
+      local phaseDivingSpellID = 1214374
+      for i = 1, 100 do 
+        local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+        if aura == nil then
+          break
+        end
+        if aura.spellId and aura.spellId == phaseDivingSpellID then
+          return true
+        end
+      end
+    end
+  end
+
+  return false
+end

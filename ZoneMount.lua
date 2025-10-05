@@ -117,6 +117,8 @@ function ZoneMount_ApplyDefaultSettings()
 end
 
 function ZoneMountCommandHandler(msg) 
+    ZoneMount_ChooseRideAlong = false
+
     if msg == 'mount' then
       ZoneMount_MountOrDismount()
     elseif msg == 'macro' then
@@ -140,7 +142,7 @@ function ZoneMountCommandHandler(msg)
     --   ZoneMount_ToggleDebugMode()
     elseif msg == 'ra' or msg == 'ridealong' then
       ZoneMount_ChooseRideAlong = true
-      ZoneMount_LookForMount()
+      ZoneMount_MountOrDismount()
     elseif msg == '' or msg == 'help' then
       ZoneMount_DisplayHelp()
     else

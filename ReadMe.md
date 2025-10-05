@@ -51,6 +51,7 @@ To ignore specific mounts, go to Game Menu > Options > AddOns > ZoneMount. Type 
 
 ### Version History
 
+- v 2.2.3: Summons ground mounts for phase diving in K'aresh.
 - v 2.2.2: ZoneMount now summons a mount when you can fly inside Manaforge Omega.
 - v 2.2.1: Added option to disable flight safety (thanks to @LuckyPhilDev for the PR).
 - v 2.2.0: Added /zm ra command to summon a ride along mount or /zm macro2 to create a macro for it.

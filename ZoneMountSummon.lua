@@ -388,7 +388,7 @@ function ZoneMount_TypeOfMountToSummon()
     return 'ridealong'
   elseif IsIndoors() then
     return 'none'
-  elseif ZoneMount_ShouldUseGroundMount() then
+  elseif ZoneMount_ShouldUseGroundMount() or ZoneMount_IsPhaseDiving() then
     return 'ground'
   elseif ZoneMount_IsUnderwater() or (ZoneMount_InVashjir() and IsSubmerged()) then
     return 'water'
