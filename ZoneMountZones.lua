@@ -118,19 +118,19 @@ function ZoneMount_InDraenor()
   end
 end
 
-function ZoneMount_InDragonIsles()
-  if ZoneMount_IsInRemix() then
-    return true
-  end
+-- function ZoneMount_InDragonIsles()
+--   if ZoneMount_IsInRemix() then
+--     return true
+--   end
 
-  local zone_names = ZoneMount_ZoneNames()
-  for n = 1, #zone_names do
-    if zone_names[n] == 'Dragon Isles' then
-      return true
-    end
-  end
-  return false
-end
+--   local zone_names = ZoneMount_ZoneNames()
+--   for n = 1, #zone_names do
+--     if zone_names[n] == 'Dragon Isles' then
+--       return true
+--     end
+--   end
+--   return false
+-- end
 
 function ZoneMount_IsInKhazAlgar()
   local zone_names = ZoneMount_ZoneNames()
@@ -143,6 +143,7 @@ function ZoneMount_IsInKhazAlgar()
 end
 
 -- /dump C_Spell.GetSpellInfo(424143)
+-- /dump C_Spell.GetSpellInfo(1213439)
 function ZoneMount_IsInRemix()
   for i = 1, 50 do 
     local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
@@ -153,7 +154,7 @@ function ZoneMount_IsInRemix()
     local name = aura.name
     local spellId = aura.spellId
     if name and spellId then
-      if name.find(name, 'Remix') or spellId == 424143 then
+      if name.find(name, 'Remix') or spellId == 1213439 or spellId == 424143 then
         return true
       end
     else
