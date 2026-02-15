@@ -37,6 +37,7 @@ Slash Commands:
 Version History:
 ===============
 
+v 2.3.1: Updated for 12.0.1.
 v 2.3.0: Updated for 12.0.
 v 2.2.4: Updated for 11.2.5 and Legion Remix.
 v 2.2.3: Summons ground mounts for phase diving in K'aresh.
