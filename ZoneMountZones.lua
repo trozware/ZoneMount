@@ -1,8 +1,7 @@
-
 function ZoneMount_ZoneNames()
-  local map_id = C_Map.GetBestMapForUnit('player')
+  local map_id = C_Map.GetBestMapForUnit("player")
   local info = nil
-  if map_id then 
+  if map_id then
     info = C_Map.GetMapInfo(map_id)
   end
   local zone_names = {}
@@ -13,14 +12,14 @@ function ZoneMount_ZoneNames()
     zone_names[#zone_names + 1] = subZone
   end
 
-  if info == nil or info.name == nil or info.name == '' then
+  if info == nil or info.name == nil or info.name == "" then
     return zone_names
   end
 
   if ZoneMount_InTable(zone_names, info.name) == false then
     zone_names[#zone_names + 1] = info.name
   end
-  
+
   if info.mapType == nil then
     return zone_names
   end
@@ -37,7 +36,7 @@ function ZoneMount_ZoneNames()
     end
   end
 
-  local children = C_Map.GetMapChildrenInfo(previous_map_id)  -- , _, true)
+  local children = C_Map.GetMapChildrenInfo(previous_map_id) -- , _, true)
   for n = 1, #children do
     if ZoneMount_InTable(zone_names, children[n].name) == false then
       zone_names[#zone_names + 1] = children[n].name
@@ -69,13 +68,13 @@ function ZoneMount_SourceInValidZone(source, zones)
   -- end
 
   -- print(source)
-  return ''
+  return ""
 end
 
 function ZoneMount_IsUnderwater()
   local timer, initial, maxvalue, scale, paused, label = GetMirrorTimerInfo(2)
   -- print('Checking for underwater: timer = ' .. timer .. ' Scale = ' .. scale .. ' Paused = ' .. paused)
-  if timer == 'BREATH' and paused == 0 and scale < 0 then
+  if timer == "BREATH" and paused == 0 and scale < 0 then
     return true
   end
   return false
@@ -83,8 +82,7 @@ end
 
 function ZoneMount_InVashjir()
   local zone = GetZoneText()
-  if zone == 'Shimmering Expanse' or zone == 'Abyssal Depths' 
-    or zone == "Kelp'thar Forest" then
+  if zone == "Shimmering Expanse" or zone == "Abyssal Depths" or zone == "Kelp'thar Forest" then
     return true
   else
     return false
@@ -93,13 +91,13 @@ end
 
 function ZoneMount_InTheMaw()
   local zone = GetZoneText()
-  if zone == 'The Maw' then
+  if zone == "The Maw" then
     return true
   end
 
   local zone_names = ZoneMount_ZoneNames()
   for n = 1, #zone_names do
-    if zone_names[n] == 'The Maw' then
+    if zone_names[n] == "The Maw" then
       return true
     end
   end
@@ -108,10 +106,16 @@ function ZoneMount_InTheMaw()
 end
 
 function ZoneMount_InDraenor()
-  local zone = GetZoneText()  
-  if zone == 'Shadowmoon Valley' or zone == 'Frostfire Ridge' or zone == 'Ashran'
-    or zone == 'Gorgrond' or zone == 'Nagrand' or zone == 'Spires of Arak' or zone == 'Talador' 
-    or zone == 'Tanaan Jungle' or zone == 'Lunarfall' or zone == 'Frostwall' then
+  local zone = GetZoneText()
+  if
+    zone == "Shadowmoon Valley" or zone == "Frostfire Ridge" or zone == "Ashran" or zone == "Gorgrond" or
+      zone == "Nagrand" or
+      zone == "Spires of Arak" or
+      zone == "Talador" or
+      zone == "Tanaan Jungle" or
+      zone == "Lunarfall" or
+      zone == "Frostwall"
+   then
     return true
   else
     return false
@@ -135,7 +139,7 @@ end
 function ZoneMount_IsInKhazAlgar()
   local zone_names = ZoneMount_ZoneNames()
   for n = 1, #zone_names do
-    if zone_names[n] == 'Khaz Algar' then
+    if zone_names[n] == "Khaz Algar" then
       return true
     end
   end
@@ -145,16 +149,20 @@ end
 -- /dump C_Spell.GetSpellInfo(424143)
 -- /dump C_Spell.GetSpellInfo(1213439)
 function ZoneMount_IsInRemix()
-  for i = 1, 50 do 
-    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+  for i = 1, 50 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
     if aura == nil then
+      return false
+    end
+
+    if canaccesstable(aura) == false or canaccessvalue(aura.spellId) == false then
       return false
     end
 
     local name = aura.name
     local spellId = aura.spellId
     if name and spellId then
-      if name.find(name, 'Remix') or spellId == 1213439 or spellId == 424143 then
+      if name.find(name, "Remix") or spellId == 1213439 or spellId == 424143 then
         return true
       end
     else
@@ -166,7 +174,7 @@ end
 function ZoneMount_IsInUndermine()
   local zone_names = ZoneMount_ZoneNames()
   for n = 1, #zone_names do
-    if zone_names[n] == 'Undermine' then
+    if zone_names[n] == "Undermine" then
       return true
     end
   end
@@ -183,24 +191,24 @@ function ZoneMount_HasRadiantLight()
     return false
   end
 
-  for i = 1, 100 do 
-    local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+  for i = 1, 100 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i)
     if aura == nil then
       break
     else
-      if aura.spellId and aura.spellId == radiantLightSpellID then
+      if canaccesstable(aura) and canaccessvalue(aura.spellId) and aura.spellId == radiantLightSpellID then
         return true
       end
     end
   end
 
-  for i = 1, 100 do 
-    local aura = C_TooltipInfo.GetUnitDebuff('player', i)
+  for i = 1, 100 do
+    local aura = C_TooltipInfo.GetUnitDebuff("player", i)
 
     if aura == nil then
       break
     else
-      if aura.id and aura.id == radiantLightDebuffID then
+      if canaccesstable(aura) and canaccessvalue(aura.id) and aura.id == radiantLightDebuffID then
         return true
       end
     end
@@ -217,24 +225,24 @@ function ZoneMount_HasSoaringReshii()
     return false
   end
 
-  for i = 1, 100 do 
-    local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+  for i = 1, 100 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i)
     if aura == nil then
       break
     else
-      if aura.spellId and aura.spellId == soaringReshiiSpellID then
+      if canaccesstable(aura) and canaccessvalue(aura.spellId) and aura.spellId == soaringReshiiSpellID then
         return true
       end
     end
   end
 
-  for i = 1, 100 do 
-    local aura = C_TooltipInfo.GetUnitDebuff('player', i)
+  for i = 1, 100 do
+    local aura = C_TooltipInfo.GetUnitDebuff("player", i)
 
     if aura == nil then
       break
     else
-      if aura.id and aura.id == soaringReshiiDebuffID then
+      if canaccesstable(aura) and canaccessvalue(aura.id) and aura.id == soaringReshiiDebuffID then
         return true
       end
     end
@@ -269,12 +277,12 @@ function ZoneMount_IsPhaseDiving()
   for n = 1, #zone_names do
     if zone_names[n] == "K'aresh" then
       local phaseDivingSpellID = 1214374
-      for i = 1, 100 do 
-        local aura = C_UnitAuras.GetAuraDataByIndex('player', i)
+      for i = 1, 100 do
+        local aura = C_UnitAuras.GetAuraDataByIndex("player", i)
         if aura == nil then
           break
         end
-        if aura.spellId and aura.spellId == phaseDivingSpellID then
+        if canaccesstable(aura) and canaccessvalue(aura.spellId) and aura.spellId == phaseDivingSpellID then
           return true
         end
       end
