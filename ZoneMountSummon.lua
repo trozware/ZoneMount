@@ -1,5 +1,5 @@
-function ZoneMount_MountOrDismount() 
-  local now = GetTime()           -- time in seconds
+function ZoneMount_MountOrDismount()
+  local now = GetTime() -- time in seconds
   local timelimit = 1.6
   if IsMounted() then
     timelimit = 0.16
@@ -15,19 +15,19 @@ function ZoneMount_MountOrDismount()
       ZoneMount_LastDismountCommand = nil
       ZoneMount_LastSummonTime = now - 2
       if IsInGroup() == false then
-        ZoneMount_UpdateMacro()   -- in case Pathfinder achievement has been earned
+        ZoneMount_UpdateMacro() -- in case Pathfinder achievement has been earned
       end
     elseif ZoneMount_HasMacroInstalled then
-      if zoneMountSettings.flightSafetyDisabled == true then 
+      if zoneMountSettings.flightSafetyDisabled == true then
         Dismount()
-      else 
-        local now = GetTime()           -- time in seconds
+      else
+        local now = GetTime() -- time in seconds
         if ZoneMount_LastDismountCommand ~= nil and now - ZoneMount_LastDismountCommand < 2.0 then
           Dismount()
         else
           if not zoneMountSettings.hideWarnings then
-            local formatted_msg = '|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100'
-            formatted_msg = formatted_msg .. 'To plummet off your mount, press the macro button again within 2 seconds.'
+            local formatted_msg = "|c0000FF00ZoneMount: |c0000FFFFYou are flying.|c00FFD100"
+            formatted_msg = formatted_msg .. "To plummet off your mount, press the macro button again within 2 seconds."
             ChatFrame1:AddMessage(formatted_msg)
           end
 
@@ -45,33 +45,33 @@ function ZoneMount_MountOrDismount()
 end
 
 function ZoneMount_LookForMount()
-  local badReason = ZoneMount_ShouldLookForNewMount() 
-  if badReason ~= 'yes' then
+  local badReason = ZoneMount_ShouldLookForNewMount()
+  if badReason ~= "yes" then
     if not zoneMountSettings.hideWarnings then
-      if badReason ~= 'You are casting ' .. ZoneMount_LastSummonName then
-        ZoneMount_DisplayMessage('Not a good time right now... ' .. badReason, true)
+      if badReason ~= "You are casting " .. ZoneMount_LastSummonName then
+        ZoneMount_DisplayMessage("Not a good time right now... " .. badReason, true)
       end
     end
     return
   end
 
   local mount_type = ZoneMount_TypeOfMountToSummon()
-  local secondary_mount_type = 'ground'
-  if mount_type == 'water' and IsFlyableArea() and UnitLevel("player") >= 20 then
-    secondary_mount_type = 'flying'
-  elseif mount_type == 'ridealong' then
-    secondary_mount_type = 'flying'
+  local secondary_mount_type = "ground"
+  if mount_type == "water" and IsFlyableArea() and UnitLevel("player") >= 20 then
+    secondary_mount_type = "flying"
+  elseif mount_type == "ridealong" then
+    secondary_mount_type = "flying"
   end
 
   -- print('Looking for ', mount_type, 'mount')
-  if mount_type == 'none' then
+  if mount_type == "none" then
     if not zoneMountSettings.hideWarnings then
-      ZoneMount_DisplayMessage('Not a good place right now...', true)
+      ZoneMount_DisplayMessage("Not a good place right now...", true)
     end
     return
   end
 
-  local debug_report = ''
+  local debug_report = ""
   local valid_mounts = ZoneMount_ValidMounts()
   -- print('Number of valid mounts = ', #valid_mounts)
   if #valid_mounts == 0 then
@@ -94,13 +94,29 @@ function ZoneMount_LookForMount()
 
   for n = 1, #valid_mounts do
     local mount_id = valid_mounts[n].ID
-    if mount_id and mount_id ~= '' then
-      local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-        uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-        = C_MountJournal.GetMountInfoExtraByID(mount_id)
-      local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific,  
-        faction, shouldHideOnChar, isCollected, mountID, isSteadyFlight
-        = C_MountJournal.GetMountInfoByID(mount_id)
+    if mount_id and mount_id ~= "" then
+      local creatureDisplayInfoID,
+        description,
+        source,
+        isSelfMount,
+        mountTypeID,
+        uiModelSceneID,
+        animID,
+        spellVisualKitID,
+        disablePlayerMountPreview = C_MountJournal.GetMountInfoExtraByID(mount_id)
+      local name,
+        spellID,
+        icon,
+        isActive,
+        isUsable,
+        sourceType,
+        isFavorite,
+        isFactionSpecific,
+        faction,
+        shouldHideOnChar,
+        isCollected,
+        mountID,
+        isSteadyFlight = C_MountJournal.GetMountInfoByID(mount_id)
 
       if ZoneMount_RightMountType(mount_type, mountTypeID, isSteadyFlight) then
         -- print('==================')
@@ -108,35 +124,56 @@ function ZoneMount_LookForMount()
         -- print(description)
         -- print(matchingZoneName)
 
-        type_mounts[#type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
+        type_mounts[#type_mounts + 1] = {
+          name = valid_mounts[n].name,
+          ID = valid_mounts[n].ID,
+          description = description,
+          source = ""
+        }
 
         local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-        if matchingZoneName ~= '' then
-          zone_mounts[#zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = matchingZoneName }
+        if matchingZoneName ~= "" then
+          zone_mounts[#zone_mounts + 1] = {
+            name = valid_mounts[n].name,
+            ID = valid_mounts[n].ID,
+            description = description,
+            source = matchingZoneName
+          }
         else
           special_purchase = false
-          if source and #source > 0 then 
-            if string.find(source, 'Game') then
+          if source and #source > 0 then
+            if string.find(source, "Game") then
               special_purchase = true
-            elseif string.find(source, 'Promotion') then
+            elseif string.find(source, "Promotion") then
               special_purchase = true
             end
           end
           if special_purchase then
-            special_mounts[#special_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
+            special_mounts[#special_mounts + 1] = {
+              name = valid_mounts[n].name,
+              ID = valid_mounts[n].ID,
+              description = description,
+              source = ""
+            }
           end
         end
-      else if secondary_mount_type ~= '' and ZoneMount_RightMountType(secondary_mount_type, mountTypeID, isSteadyFlight) then
-        secondary_type_mounts[#secondary_type_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-            description = description, source = '' }
+      else
+        if secondary_mount_type ~= "" and ZoneMount_RightMountType(secondary_mount_type, mountTypeID, isSteadyFlight) then
+          secondary_type_mounts[#secondary_type_mounts + 1] = {
+            name = valid_mounts[n].name,
+            ID = valid_mounts[n].ID,
+            description = description,
+            source = ""
+          }
 
-        local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
-        if matchingZoneName ~= '' then
-            secondary_zone_mounts[#secondary_zone_mounts + 1] = { name = valid_mounts[n].name, ID = valid_mounts[n].ID, 
-              description = description, source = matchingZoneName }
+          local matchingZoneName = ZoneMount_SourceInValidZone(source, zone_names)
+          if matchingZoneName ~= "" then
+            secondary_zone_mounts[#secondary_zone_mounts + 1] = {
+              name = valid_mounts[n].name,
+              ID = valid_mounts[n].ID,
+              description = description,
+              source = matchingZoneName
+            }
           end
         end
       end
@@ -144,26 +181,28 @@ function ZoneMount_LookForMount()
   end
 
   if ZoneMount_DebugMode == true then
-    debug_report = 'Type: ' .. mount_type .. ' = ' .. #type_mounts .. '\n' ..
-      'Zone: ' .. #zone_mounts .. '\n'
+    debug_report = "Type: " .. mount_type .. " = " .. #type_mounts .. "\n" .. "Zone: " .. #zone_mounts .. "\n"
 
-    if secondary_mount_type ~= '' then
-      debug_report = debug_report .. 'Type 2: ' .. secondary_mount_type .. ' = ' .. #secondary_type_mounts .. '\n' ..
-            'Zone 2: ' .. #secondary_zone_mounts .. '\n'
+    if secondary_mount_type ~= "" then
+      debug_report =
+        debug_report ..
+        "Type 2: " ..
+          secondary_mount_type ..
+            " = " .. #secondary_type_mounts .. "\n" .. "Zone 2: " .. #secondary_zone_mounts .. "\n"
     end
   end
-  
+
   -- print('Number of ' .. mount_type .. ' mounts = ', #type_mounts)
   -- print('Number of zone mounts = ', #zone_mounts)
-  
+
   -- if secondary_mount_type ~= '' then
-    --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
-    --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
+  --   print('Number of ' .. secondary_mount_type .. ' mounts = ', #secondary_type_mounts)
+  --   print('Number of secondary zone mounts = ', #secondary_zone_mounts)
   -- end
-  
+
   -- print('Number of special mounts = ', #special_mounts)
   -- for n = 1, #special_mounts do
-    --   print(special_mounts[n].name, special_mounts[n].source)
+  --   print(special_mounts[n].name, special_mounts[n].source)
   -- end
 
   if #zone_mounts == 0 then
@@ -191,7 +230,7 @@ function ZoneMount_LookForMount()
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
     zone_mounts[2] = zone_mounts[1]
-    local extra_name = ''
+    local extra_name = ""
 
     repeat
       mount_index = math.random(#type_mounts)
@@ -202,7 +241,7 @@ function ZoneMount_LookForMount()
     until #zone_mounts == 3
     ZoneMount_LastSummon = nil
 
-    debug_report = debug_report .. 'adding type mount to zone mounts - ' ..  extra_name .. '\n'
+    debug_report = debug_report .. "adding type mount to zone mounts - " .. extra_name .. "\n"
   end
 
   if #zone_mounts == 1 and #valid_mounts > 1 and zoneMountSettings.padZoneList == true then
@@ -210,7 +249,7 @@ function ZoneMount_LookForMount()
     -- duplicate correct one to give it a better chance
     local zone_name = zone_mounts[1].name
     zone_mounts[2] = zone_mounts[1]
-    local extra_name = ''
+    local extra_name = ""
     repeat
       mount_index = math.random(#valid_mounts)
       if valid_mounts[mount_index].name ~= zone_name then
@@ -220,7 +259,7 @@ function ZoneMount_LookForMount()
     until #zone_mounts == 3
     ZoneMount_LastSummon = nil
 
-    debug_report = debug_report .. 'adding valid mount to zone mounts - ' ..  extra_name .. '\n'
+    debug_report = debug_report .. "adding valid mount to zone mounts - " .. extra_name .. "\n"
   end
 
   if #zone_mounts == 0 then
@@ -231,7 +270,7 @@ function ZoneMount_LookForMount()
     end
   end
 
-  debug_report = debug_report .. 'choosing randomly from ' .. #zone_mounts .. ' possible mounts...'
+  debug_report = debug_report .. "choosing randomly from " .. #zone_mounts .. " possible mounts..."
 
   -- print('Choosing randomly from ' .. #zone_mounts .. ' possible mounts...')
   local max_attempts = #zone_mounts
@@ -243,7 +282,8 @@ function ZoneMount_LookForMount()
     id = zone_mounts[mount_index].ID
     description = zone_mounts[mount_index].description
     source = zone_mounts[mount_index].source
-  until (ZoneMount_IsAlreadyMounted(name) == false and id ~= ZoneMount_LastSummon) or #zone_mounts == 1 or attempts >= max_attempts
+  until (ZoneMount_IsAlreadyMounted(name) == false and id ~= ZoneMount_LastSummon) or #zone_mounts == 1 or
+    attempts >= max_attempts
 
   if not description or #description == 0 then
     description = ZoneMount_DescriptionForMount(id)
@@ -265,10 +305,10 @@ end
 function ZoneMount_clearFilters()
   C_MountJournal.SetAllTypeFilters(true)
   C_MountJournal.SetAllSourceFilters(true)
-  C_MountJournal.SetSearch('')
+  C_MountJournal.SetSearch("")
 
-  -- 1 = LE_MOUNT_JOURNAL_FILTER_COLLECTED	
-  -- 2 = LE_MOUNT_JOURNAL_FILTER_NOT_COLLECTED	
+  -- 1 = LE_MOUNT_JOURNAL_FILTER_COLLECTED
+  -- 2 = LE_MOUNT_JOURNAL_FILTER_NOT_COLLECTED
   -- 3 =LE_MOUNT_JOURNAL_FILTER_UNUSABLE
   C_MountJournal.SetCollectedFilterSetting(1, true)
   C_MountJournal.SetCollectedFilterSetting(2, false)
@@ -300,12 +340,22 @@ function ZoneMount_ValidMounts()
   local chauffeur_mounts = {}
   local maw_mounts = {}
 
-  local englishFaction, localizedFaction = UnitFactionGroup('player')
+  local englishFaction, localizedFaction = UnitFactionGroup("player")
 
   for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isSteadyFlight = 
-      C_MountJournal.GetDisplayedMountInfo(n)
+    local creatureName,
+      spellID,
+      icon,
+      active,
+      isUsable,
+      sourceType,
+      isFavorite,
+      isFactionSpecific,
+      faction,
+      hideOnChar,
+      isCollected,
+      mountID,
+      isSteadyFlight = C_MountJournal.GetDisplayedMountInfo(n)
 
     if mountID == 125 or mountID == 1539 then
       -- Riding Turtle or Unsuccessful Prototype Fleetpod, too slow
@@ -323,9 +373,9 @@ function ZoneMount_ValidMounts()
     -- isFactionSpecific - true if the mount is only available to one faction, false otherwise.
     -- faction - 0 if the mount is available only to Horde players, 1 if the mount is available only to Alliance players, or nil if the mount is not faction-specific.
     if isFactionSpecific then
-      if englishFaction == 'Alliance' and faction == 0 then
+      if englishFaction == "Alliance" and faction == 0 then
         isUsable = false
-      elseif englishFaction == 'Horde' and faction == 1 then
+      elseif englishFaction == "Horde" and faction == 1 then
         isUsable = false
       end
     end
@@ -345,12 +395,12 @@ function ZoneMount_ValidMounts()
 
     if zoneMountSettings.favsOnly == false or isFavorite == true then
       if isCollected and (mountID == 1304 or mountID == 1441 or mountID == 1442) then
-        maw_mounts[#maw_mounts + 1] = { name = creatureName, ID = mountID }
+        maw_mounts[#maw_mounts + 1] = {name = creatureName, ID = mountID}
       elseif isUsable and isCollected then
         if (mountID == 678 or mountID == 679) and playerLevel > 10 then
-          chauffeur_mounts[#chauffeur_mounts + 1] = { name = creatureName, ID = mountID }
+          chauffeur_mounts[#chauffeur_mounts + 1] = {name = creatureName, ID = mountID}
         else
-          valid_mounts[#valid_mounts + 1] = { name = creatureName, ID = mountID }
+          valid_mounts[#valid_mounts + 1] = {name = creatureName, ID = mountID}
         end
       end
     end
@@ -374,49 +424,51 @@ function ZoneMount_FailReason()
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
 
   if total_mounts == 0 then
-    return 'You have no mounts.'
+    return "You have no mounts."
   elseif num_mounts == 0 then
-    return 'You have no mounts that can be used here.'
+    return "You have no mounts that can be used here."
   else
-    return 'You are not allowed to mount in this area.'
+    return "You are not allowed to mount in this area."
   end
 end
 
 -- /run print(ZoneMount_TypeOfMountToSummon())
 function ZoneMount_TypeOfMountToSummon()
   if ZoneMount_ChooseRideAlong then
-    return 'ridealong'
+    return "ridealong"
   elseif IsIndoors() then
-    return 'none'
+    return "none"
   elseif ZoneMount_ShouldUseGroundMount() or ZoneMount_IsPhaseDiving() then
-    return 'ground'
+    return "ground"
   elseif ZoneMount_IsUnderwater() or (ZoneMount_InVashjir() and IsSubmerged()) then
-    return 'water'
+    return "water"
   elseif UnitLevel("player") >= 10 and UnitLevel("player") < 20 then
     if IsModifierKeyDown() then
-      return 'ground'
+      return "ground"
     else
-      return 'flying'
+      return "flying"
     end
   elseif IsFlyableArea() == false and IsAdvancedFlyableArea() == false then
-    return 'ground'
+    return "ground"
   elseif IsFlyableArea() and UnitLevel("player") >= 10 then
-    return 'flying'
+    return "flying"
   elseif ZoneMount_IsInRemix() then
-    return 'flying'
+    return "flying"
   elseif ZoneMount_CanSkyride() then
-    return 'flying'
+    return "flying"
   elseif ZoneMount_InDraenor() and UnitLevel("player") >= 10 then
-    return 'flying'
+    return "flying"
   elseif IsSubmerged() or IsSwimming() then
-    return 'water'
+    return "water"
   else
-    return 'ground'
+    return "ground"
   end
 end
 
 function ZoneMount_ShouldUseGroundMount()
-  if zoneMountSettings.shiftUseGround and IsShiftKeyDown() then
+  if ZoneMount_HasOppressiveVoid() then
+    return true
+  elseif zoneMountSettings.shiftUseGround and IsShiftKeyDown() then
     return true
   elseif zoneMountSettings.ctrlUseGround and IsControlKeyDown() then
     return true
@@ -429,48 +481,48 @@ end
 
 function ZoneMount_ShouldLookForNewMount()
   if UnitIsFeignDeath("player") then
-    return 'You are feigning death.'
+    return "You are feigning death."
   end
 
   if UnitIsDeadOrGhost("player") then
-    return 'You are dead.'
+    return "You are dead."
   end
 
   local spellName, _, _, _, _, _, _, _, _, _ = UnitCastingInfo("player")
   if spellName ~= nil then
-    return 'You are casting ' .. spellName .. '.'
-  end 
+    return "You are casting " .. spellName .. "."
+  end
 
   local channelName, _, _, _, _, _, _, _ = UnitChannelInfo("player")
   if channelName ~= nil then
-    return 'You are channeling ' .. channelName .. '.'
+    return "You are channeling " .. channelName .. "."
   end
 
   if IsFlying() == true then
-    return 'You are flying.'
+    return "You are flying."
   end
 
   if UnitInVehicle("player") == true then
-    return 'You are in a vehicle.'
+    return "You are in a vehicle."
   end
 
   if UnitOnTaxi("player") == true then
-    return 'You are in a taxi.'
+    return "You are in a taxi."
   end
 
   if ZoneMount_HasRadiantLight() == true or ZoneMount_HasSoaringReshii() == true then
-    return 'yes'
+    return "yes"
   end
 
   if InCombatLockdown() then
-    return 'You are in combat.'
+    return "You are in combat."
   end
 
-  return 'yes'
+  return "yes"
 end
 
 function ZoneMount_RightMountType(required_type, type_id, isSteadyFlight)
-  if required_type == 'water' then
+  if required_type == "water" then
     if type_id == 231 or type_id == 407 then
       -- turtles work on land or water
       -- 407s work in water & flying
@@ -484,17 +536,16 @@ function ZoneMount_RightMountType(required_type, type_id, isSteadyFlight)
     else
       return false
     end
-  elseif required_type == 'flying' then
+  elseif required_type == "flying" then
     if type_id == 247 or type_id == 248 or type_id == 398 or type_id == 407 or type_id == 424 or type_id == 402 then
       return true
     else
       return false
     end
-  elseif required_type == 'ground' then
+  elseif required_type == "ground" then
     -- don't summon Savage Blue Battle Turtle (231) if not in water
 
-    if type_id == 230 or type_id == 241 or type_id == 269 
-      or type_id == 284 or type_id == 408 or type_id == 412 then
+    if type_id == 230 or type_id == 241 or type_id == 269 or type_id == 284 or type_id == 408 or type_id == 412 then
       return true
     else
       return false

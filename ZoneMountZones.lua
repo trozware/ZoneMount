@@ -291,3 +291,38 @@ function ZoneMount_IsPhaseDiving()
 
   return false
 end
+
+-- /dump C_Spell.GetSpellInfo(1226952)
+-- /dump ZoneMount_HasOppressiveVoid()
+function ZoneMount_HasOppressiveVoid()
+  local oppressiveVoidSpellID = 1226952
+
+  if UnitLevel("player") < 80 then
+    return false
+  end
+
+  for i = 1, 100 do
+    local aura = C_TooltipInfo.GetUnitDebuff("player", i)
+
+    if aura == nil then
+      break
+    else
+      if canaccesstable(aura) and canaccessvalue(aura.id) and aura.id == oppressiveVoidSpellID then
+        return true
+      end
+    end
+  end
+
+  for i = 1, 100 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i)
+    if aura == nil then
+      break
+    else
+      if canaccesstable(aura) and canaccessvalue(aura.spellId) and aura.spellId == oppressiveVoidSpellID then
+        return true
+      end
+    end
+  end
+
+  return false
+end
