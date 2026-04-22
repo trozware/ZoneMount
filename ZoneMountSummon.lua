@@ -514,7 +514,7 @@ function ZoneMount_ShouldLookForNewMount()
     return "yes"
   end
 
-  if InCombatLockdown() then
+  if InCombatLockdown() or PlayerIsInCombat() then
     return "You are in combat."
   end
 

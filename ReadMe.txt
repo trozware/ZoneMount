@@ -37,7 +37,8 @@ Slash Commands:
 Version History:
 ===============
 
-v 2.3.3: looks for Oppressive Void debuff in Quel'Danas and summons ground mount if so.
+v 2.4.0: Updated for 12.0.5. Possible fix for macro text appearing in chat.
+v 2.3.3: Looks for Oppressive Void debuff in Quel'Danas and summons ground mount if so.
 v 2.3.2: Allowed for new Blizzard security when accessing aura data. Mounting in Manaforge Omega and similar locations will now work again.
 v 2.3.1: Updated for 12.0.1.
 v 2.3.0: Updated for 12.0.

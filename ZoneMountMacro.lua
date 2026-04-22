@@ -1,50 +1,58 @@
-
 function ZoneMount_CreateMacro()
-  local existing_macro = GetMacroInfo('ZoneMount')
+  local existing_macro = GetMacroInfo("ZoneMount")
   if existing_macro then
     ZoneMount_HasMacroInstalled = true
-    ZoneMount_DisplayMessage('Your ZoneMount macro already exists. Drag it into your action bar for easy access.', true)
-    PickupMacro('ZoneMount')
+    ZoneMount_DisplayMessage("Your ZoneMount macro already exists. Drag it into your action bar for easy access.", true)
+    PickupMacro("ZoneMount")
     return
   end
 
   local macroText = ZoneMount_MacroText()
-  local macro_id = CreateMacro("ZoneMount", "136103", macroText, nil, nil);
+  local macro_id = CreateMacro("ZoneMount", "136103", macroText, nil, nil)
   if macro_id then
     ZoneMount_HasMacroInstalled = true
-    ZoneMount_DisplayMessage('Your ZoneMount macro has been created. Drag it into your action bar for easy access.', true)
-    PickupMacro('ZoneMount')
+    ZoneMount_DisplayMessage(
+      "Your ZoneMount macro has been created. Drag it into your action bar for easy access.",
+      true
+    )
+    PickupMacro("ZoneMount")
   else
-    ZoneMount_DisplayMessage('There was a problem creating your ZoneMount macro.', true)
+    ZoneMount_DisplayMessage("There was a problem creating your ZoneMount macro.", true)
   end
 end
 
 function ZoneMount_CreateRideAlongMacro()
-  local existing_macro = GetMacroInfo('ZoneMount Ride Along')
+  local existing_macro = GetMacroInfo("ZoneMount Ride Along")
   if existing_macro then
     ZoneMount_HasMacroInstalled = true
-    ZoneMount_DisplayMessage('Your ZoneMount Ride Along macro already exists. Drag it into your action bar for easy access.', true)
-    PickupMacro('ZoneMount Ride Along')
+    ZoneMount_DisplayMessage(
+      "Your ZoneMount Ride Along macro already exists. Drag it into your action bar for easy access.",
+      true
+    )
+    PickupMacro("ZoneMount Ride Along")
     return
   end
 
   local macroText = "/zm ridealong"
-  local macro_id = CreateMacro("ZoneMount Ride Along", "132226", macroText, nil, nil);
+  local macro_id = CreateMacro("ZoneMount Ride Along", "132226", macroText, nil, nil)
   if macro_id then
     ZoneMount_HasMacroInstalled = true
-    ZoneMount_DisplayMessage('Your ZoneMount Ride Along macro has been created. Drag it into your action bar for easy access.', true)
-    PickupMacro('ZoneMount Ride Along')
+    ZoneMount_DisplayMessage(
+      "Your ZoneMount Ride Along macro has been created. Drag it into your action bar for easy access.",
+      true
+    )
+    PickupMacro("ZoneMount Ride Along")
   else
-    ZoneMount_DisplayMessage('There was a problem creating your ZoneMount Ride Along macro.', true)
+    ZoneMount_DisplayMessage("There was a problem creating your ZoneMount Ride Along macro.", true)
   end
 end
 
 function ZoneMount_UpdateMacro()
-  if InCombatLockdown() then
+  if InCombatLockdown() or PlayerIsInCombat() then
     return
   end
 
-  local existing_macro = GetMacroInfo('ZoneMount')
+  local existing_macro = GetMacroInfo("ZoneMount")
   if existing_macro then
     local macroIndex = GetMacroIndexByName("ZoneMount")
     if macroIndex > 0 then
@@ -69,23 +77,29 @@ function ZoneMount_MacroText()
   end
 
   local canBreakneck = ZoneMount_CanUseUndermineMount()
-  local breakneckText = ''
+  local breakneckText = ""
   if canBreakneck then
     breakneckText = "/cast G-99 Breakneck\n"
   end
 
   if canSwitch then
-    local mods = ''
+    local clauses = {}
     if zoneMountSettings.shiftSwitchStyle then
-      mods = mods .. '[mod:shift,noflying]'
+      clauses[#clauses + 1] = "[mod:shift,noflying] Switch Flight Style"
     end
     if zoneMountSettings.ctrlSwitchStyle then
-      mods = mods .. '[mod:ctrl,noflying]'
+      clauses[#clauses + 1] = "[mod:ctrl,noflying] Switch Flight Style"
     end
     if zoneMountSettings.altSwitchStyle then
-      mods = mods .. '[mod:alt,noflying]'
+      clauses[#clauses + 1] = "[mod:alt,noflying] Switch Flight Style"
     end
-    local macroText = "/quietcast\n/cast " .. mods .. " Switch Flight Style\n" .. breakneckText .. "/zm mount"
+
+    local castLine = ""
+    if #clauses > 0 then
+      castLine = "/cast " .. table.concat(clauses, "; ") .. "\n"
+    end
+
+    local macroText = "/quietcast\n" .. castLine .. breakneckText .. "/zm mount"
     return macroText
   end
   local macroText = "/quietcast\n" .. breakneckText .. "/zm mount"
