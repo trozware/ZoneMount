@@ -13,8 +13,7 @@
 -- 132226 = Horse shoe icon - gold
 -- 136103 = Horse shoe icon - blue
 
-
-ZoneMount = {} 
+ZoneMount = {}
 
 local ZoneMount_EventFrame = CreateFrame("Frame")
 ZoneMount_EventFrame:RegisterEvent("VARIABLES_LOADED")
@@ -25,14 +24,15 @@ ZoneMount_EventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
 ZoneMount_LastSummon = nil
 ZoneMount_LastSummonTime = 0
-ZoneMount_LastSummonName = ''
+ZoneMount_LastSummonName = ""
 ZoneMount_DebugMode = false
 ZoneMount_LastDismountCommand = nil
 ZoneMount_HasMacroInstalled = false
 ZoneMount_LastChatReport = 0
 ZoneMount_ChooseRideAlong = false
 
-ZoneMount_EventFrame:SetScript("OnEvent",
+ZoneMount_EventFrame:SetScript(
+  "OnEvent",
   function(self, event, ...)
     -- print(event)
     if event == "VARIABLES_LOADED" then
@@ -44,7 +44,7 @@ ZoneMount_EventFrame:SetScript("OnEvent",
       ZoneMount_UpdateMacro()
     elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_NEW_AREA" then
       ZoneMount_UpdateMacro()
-    end  
+    end
   end
 )
 
@@ -53,7 +53,7 @@ function ZoneMount:Initialize()
   SlashCmdList["ZONEMOUNT"] = ZoneMountCommandHandler
 
   if not zoneMountSettings then
-		zoneMountSettings = {
+    zoneMountSettings = {
       favsOnly = false,
       hideInfo = false,
       slowInfo = false,
@@ -68,19 +68,25 @@ function ZoneMount:Initialize()
       padZoneList = true,
       flightSafetyDisabled = false,
       resetCounter = 0
-		}
+    }
   end
 
   if not zoneMountSettings.ignores then
     zoneMountSettings.ignores = {}
   end
 
-  if zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and zoneMountSettings.altSwitchStyle == false then
+  if
+    zoneMountSettings.shiftSwitchStyle == false and zoneMountSettings.ctrlSwitchStyle == false and
+      zoneMountSettings.altSwitchStyle == false
+   then
     zoneMountSettings.resetCounter = 0
     ZoneMount_ApplyDefaultSettings()
   end
 
-  if zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and zoneMountSettings.altUseGround == false then
+  if
+    zoneMountSettings.shiftUseGround == false and zoneMountSettings.ctrlUseGround == false and
+      zoneMountSettings.altUseGround == false
+   then
     zoneMountSettings.resetCounter = 0
     ZoneMount_ApplyDefaultSettings()
   end
@@ -111,57 +117,57 @@ function ZoneMount_ApplyDefaultSettings()
   zoneMountSettings.altUseGround = true
   zoneMountSettings.padZoneList = true
   zoneMountSettings.flightSafetyDisabled = false
-  zoneMountSettings.resetCounter = zoneMountSettings.resetCounter + 1 
+  zoneMountSettings.resetCounter = zoneMountSettings.resetCounter + 1
 
-  ZoneMount_DisplayMessage('ZoneMount settings have been reset to the defaults.', true)
+  ZoneMount_DisplayMessage("ZoneMount settings have been reset to the defaults.", true)
 end
 
-function ZoneMountCommandHandler(msg) 
-    ZoneMount_ChooseRideAlong = false
+function ZoneMountCommandHandler(msg)
+  ZoneMount_ChooseRideAlong = false
 
-    if msg == 'mount' then
-      ZoneMount_MountOrDismount()
-    elseif msg == 'macro' then
-      ZoneMount_CreateMacro()
-    elseif msg == 'macro2' then
-      ZoneMount_CreateRideAlongMacro()
-    elseif msg == 'about' then
-      ZoneMount_DisplayInfo()
-    elseif msg == 'do' or msg == 'act' then
-      ZoneMount_DoSpecial()
-      -- ZoneMount_DisplayMessage("Current Status:", true)
-      -- print('IsOutdoors = ', IsOutdoors())
-      -- print('IsFlyableArea = ', IsFlyableArea())
-      -- print('IsMounted = ', IsMounted())
-      -- print('IsFlying = ', IsFlying())
-      -- print('IsSubmerged = ', IsSubmerged())
-      -- print('IsSwimming = ', IsSwimming())
-      -- print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
-      -- print('=========================')
+  if msg == "mount" then
+    ZoneMount_MountOrDismount()
+  elseif msg == "macro" then
+    ZoneMount_CreateMacro()
+  elseif msg == "macro2" then
+    ZoneMount_CreateRideAlongMacro()
+  elseif msg == "about" then
+    ZoneMount_DisplayInfo()
+  elseif msg == "do" or msg == "act" then
+    -- ZoneMount_DisplayMessage("Current Status:", true)
+    -- print('IsOutdoors = ', IsOutdoors())
+    -- print('IsFlyableArea = ', IsFlyableArea())
+    -- print('IsMounted = ', IsMounted())
+    -- print('IsFlying = ', IsFlying())
+    -- print('IsSubmerged = ', IsSubmerged())
+    -- print('IsSwimming = ', IsSwimming())
+    -- print('Preferred mount type = ', ZoneMount_TypeOfMountToSummon())
+    -- print('=========================')
     -- elseif msg == 'debug' then
     --   ZoneMount_ToggleDebugMode()
-    elseif msg == 'ra' or msg == 'ridealong' then
-      ZoneMount_ChooseRideAlong = true
-      ZoneMount_MountOrDismount()
-    elseif msg == '' or msg == 'help' then
-      ZoneMount_DisplayHelp()
-    else
-      ZoneMount_SearchForMount(msg)
-    end
+    ZoneMount_DoSpecial()
+  elseif msg == "ra" or msg == "ridealong" then
+    ZoneMount_ChooseRideAlong = true
+    ZoneMount_MountOrDismount()
+  elseif msg == "" or msg == "help" then
+    ZoneMount_DisplayHelp()
+  else
+    ZoneMount_SearchForMount(msg)
+  end
 end
 
 function ZoneMount_ToggleDebugMode()
   if ZoneMount_DebugMode == true then
     ZoneMount_DebugMode = false
-    print('ZoneMount debug mode is now OFF.')
+    print("ZoneMount debug mode is now OFF.")
   else
     ZoneMount_DebugMode = true
-    print('ZoneMount debug mode is now ON.')
+    print("ZoneMount debug mode is now ON.")
   end
 end
 
 function ZoneMount_ShowWelcome()
-  local v = C_AddOns.GetAddOnMetadata("ZoneMount", "Version") 
+  local v = C_AddOns.GetAddOnMetadata("ZoneMount", "Version")
   local msg = "|c0000FF00Welcome to ZoneMount v" .. v .. ": " .. "|c0000FFFFType |c00FFD100/zm |c0000FFFFfor help."
   ZoneMount_DisplayMessage(msg, false)
 end
@@ -182,19 +188,19 @@ function ZoneMount_DisplaySummonMessage(name, zone, description)
     return
   end
 
-  local now = GetTime()           -- time in seconds
+  local now = GetTime() -- time in seconds
   if zoneMountSettings.slowInfo and now - ZoneMount_LastChatReport < 180 then
     return
   end
   ZoneMount_LastChatReport = now
-  
+
   local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFSummoning " .. "|c00FFD100" .. name
-  if zone and zone ~= '' then
-    msg = msg .. "|c0000FFFF from " .. zone.. "."
+  if zone and zone ~= "" then
+    msg = msg .. "|c0000FFFF from " .. zone .. "."
   end
   ChatFrame1:AddMessage(msg)
 
-  if description and description ~= '' then
+  if description and description ~= "" then
     ChatFrame1:AddMessage("|c0000FFFF" .. description)
   end
 end
@@ -203,8 +209,8 @@ function ZoneMount_DisplayInfo()
   ZoneMount_ShowWelcome()
 
   local current_mount_info = ZoneMount_CurrentMount()
-  if current_mount_info == '' then
-    ZoneMount_DisplayMessage('You are not mounted, or your current mount cannot be determined.')
+  if current_mount_info == "" then
+    ZoneMount_DisplayMessage("You are not mounted, or your current mount cannot be determined.")
     return
   end
 
@@ -212,15 +218,15 @@ function ZoneMount_DisplayInfo()
   local msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFMount: " .. "|c00FFD100" .. current_mount_info.name
   ChatFrame1:AddMessage(msg)
 
-  if description and description ~= '' then
+  if description and description ~= "" then
     ChatFrame1:AddMessage("|c0000FFFF" .. description)
   end
 end
 
 function ZoneMount_SearchForMount(search_name)
-  if ZoneMount_ShouldLookForNewMount() == 'no' then
+  if ZoneMount_ShouldLookForNewMount() == "no" then
     if not zoneMountSettings.hideWarnings then
-      ZoneMount_DisplayMessage('Not a good time right now...', true)
+      ZoneMount_DisplayMessage("Not a good time right now...", true)
     end
     return
   end
@@ -236,21 +242,30 @@ function ZoneMount_SearchForMount(search_name)
 
   local valid_mounts = {}
   for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
-      C_MountJournal.GetDisplayedMountInfo(n)
+    local creatureName,
+      spellID,
+      icon,
+      active,
+      isUsable,
+      sourceType,
+      isFavorite,
+      isFactionSpecific,
+      faction,
+      hideOnChar,
+      isCollected,
+      mountID = C_MountJournal.GetDisplayedMountInfo(n)
 
     if isUsable and isCollected then
       if string.lower(creatureName) == mount_name then
-        totalMatch = { name = creatureName, ID = mountID }
+        totalMatch = {name = creatureName, ID = mountID}
         break
       else
         local strLocation1 = string.find(string.lower(creatureName), mount_name)
-        local strLocation2 = string.find(string.lower(creatureName), ' ' .. mount_name)
+        local strLocation2 = string.find(string.lower(creatureName), " " .. mount_name)
         if strLocation1 == 1 or strLocation2 ~= nil then
-          goodMatch[#goodMatch + 1] = { name = creatureName, ID = mountID }
+          goodMatch[#goodMatch + 1] = {name = creatureName, ID = mountID}
         elseif strLocation1 ~= nil then
-          fairMatch[#fairMatch + 1] = { name = creatureName, ID = mountID }
+          fairMatch[#fairMatch + 1] = {name = creatureName, ID = mountID}
         end
       end
     end
@@ -283,22 +298,24 @@ function ZoneMount_SearchForMount(search_name)
   if matching_id ~= nil then
     if ZoneMount_IsAlreadyMounted(matching_name) then
       if not zoneMountSettings.hideWarnings then
-        ZoneMount_DisplayMessage('Already riding ' .. matching_name, true)
+        ZoneMount_DisplayMessage("Already riding " .. matching_name, true)
       end
     else
       local description = ZoneMount_DescriptionForMount(matching_id)
-      ZoneMount_DisplaySummonMessage(matching_name, '', description)
+      ZoneMount_DisplaySummonMessage(matching_name, "", description)
       C_MountJournal.SummonByID(matching_id)
       ZoneMount_LastSummon = matching_id
     end
   else
-    ZoneMount_DisplayMessage("|c0000FF00ZoneMount: " .. "|c0000FFFFCan't find a mount with a name like |c00FFD100" .. search_name .. ".")
+    ZoneMount_DisplayMessage(
+      "|c0000FF00ZoneMount: " .. "|c0000FFFFCan't find a mount with a name like |c00FFD100" .. search_name .. "."
+    )
   end
 end
 
 function ZoneMount_DescriptionForMount(mount_id)
-    local _, description, _, _, _,  _, _, _, _  = C_MountJournal.GetMountInfoExtraByID(mount_id)
-    return description
+  local _, description, _, _, _, _, _, _, _ = C_MountJournal.GetMountInfoExtraByID(mount_id)
+  return description
 end
 
 function ZoneMount_DisplayHelp()
@@ -307,19 +324,26 @@ function ZoneMount_DisplayHelp()
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm ra|c0000FFFF to summon a ride along mount."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm about|c0000FFFF to show some information about ZoneMount and your mount."
+  msg =
+    "|c0000FF00ZoneMount: " ..
+    "|c0000FFFFType |cFFFFFFFF/zm about|c0000FFFF to show some information about ZoneMount and your mount."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm _name_|c0000FFFF to search for a mount by name."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
+  msg =
+    "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro|c0000FFFF to create a ZoneMount macro action button."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Shift while clicking the macro to toggle skyriding."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFHold down Alt while clicking the macro to summon a ground mount."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
+  msg =
+    "|c0000FF00ZoneMount: " ..
+    "|c0000FFFFType |cFFFFFFFF/zm do|c0000FFFF while on the ground to make your mount do its special action."
   ChatFrame1:AddMessage(msg)
-  msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFType |cFFFFFFFF/zm macro2|c0000FFFF to create a ZoneMount Ride Along macro action button."
+  msg =
+    "|c0000FF00ZoneMount: " ..
+    "|c0000FFFFType |cFFFFFFFF/zm macro2|c0000FFFF to create a ZoneMount Ride Along macro action button."
   ChatFrame1:AddMessage(msg)
   msg = "|c0000FF00ZoneMount: " .. "|c0000FFFFGo to Game menu - Options - Addons - ZoneMount to change settings."
   ChatFrame1:AddMessage(msg)
@@ -330,8 +354,8 @@ function ZoneMount_IsAlreadyMounted(mount_name)
     return false
   end
 
-  for i = 1, 40 do 
-    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+  for i = 1, 40 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
     if aura == nil then
       return false
     end
@@ -346,15 +370,15 @@ end
 
 function ZoneMount_CurrentMount()
   if not IsMounted() then
-    return ''
+    return ""
   end
 
   local mount_names = ZoneMount_ListMountNames()
 
-  for i = 1, 40 do 
-    local aura = C_UnitAuras.GetAuraDataByIndex('player', i, 'HELPFUL')
+  for i = 1, 40 do
+    local aura = C_UnitAuras.GetAuraDataByIndex("player", i, "HELPFUL")
     if aura == nil then
-      return ''
+      return ""
     end
 
     local name = aura.name
@@ -366,7 +390,7 @@ function ZoneMount_CurrentMount()
     end
   end
 
-  return ''
+  return ""
 end
 
 function ZoneMount_ListMountNames()
@@ -376,10 +400,19 @@ function ZoneMount_ListMountNames()
 
   local mount_names = {}
   for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID = 
-      C_MountJournal.GetDisplayedMountInfo(n)
-      mount_names[#mount_names + 1] = { name = creatureName, id = mountID }
+    local creatureName,
+      spellID,
+      icon,
+      active,
+      isUsable,
+      sourceType,
+      isFavorite,
+      isFactionSpecific,
+      faction,
+      hideOnChar,
+      isCollected,
+      mountID = C_MountJournal.GetDisplayedMountInfo(n)
+    mount_names[#mount_names + 1] = {name = creatureName, id = mountID}
   end
 
   return mount_names
@@ -392,18 +425,34 @@ function ZoneMount_ListMountTypes()
   C_MountJournal.SetCollectedFilterSetting(3, true)
 
   local num_mounts = C_MountJournal.GetNumDisplayedMounts()
-  print('Number of mounts = ', num_mounts)
+  print("Number of mounts = ", num_mounts)
 
   local types = {}
 
   for n = 1, num_mounts do
-    local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, 
-      isFactionSpecific, faction, hideOnChar, isCollected, mountID, isSteadyFlight = 
-      C_MountJournal.GetDisplayedMountInfo(n)
+    local creatureName,
+      spellID,
+      icon,
+      active,
+      isUsable,
+      sourceType,
+      isFavorite,
+      isFactionSpecific,
+      faction,
+      hideOnChar,
+      isCollected,
+      mountID,
+      isSteadyFlight = C_MountJournal.GetDisplayedMountInfo(n)
 
-    local creatureDisplayInfoID, description, source, isSelfMount, mountTypeID, 
-      uiModelSceneID, animID, spellVisualKitID, disablePlayerMountPreview 
-      = C_MountJournal.GetMountInfoExtraByID(mountID)
+    local creatureDisplayInfoID,
+      description,
+      source,
+      isSelfMount,
+      mountTypeID,
+      uiModelSceneID,
+      animID,
+      spellVisualKitID,
+      disablePlayerMountPreview = C_MountJournal.GetMountInfoExtraByID(mountID)
 
     if types[mountTypeID] then
       types[mountTypeID] = types[mountTypeID] + 1
@@ -411,28 +460,35 @@ function ZoneMount_ListMountTypes()
       types[mountTypeID] = 1
     end
 
-
-    if mountTypeID == 398 or mountTypeID == 231  or mountTypeID == 254 or mountTypeID == 232 or mountTypeID == 284 
-      or mountTypeID == 241 or mountTypeID == 407 or mountTypeID == 242 or mountTypeID == 247 then
+    if
+      mountTypeID == 398 or mountTypeID == 231 or mountTypeID == 254 or mountTypeID == 232 or mountTypeID == 284 or
+        mountTypeID == 241 or
+        mountTypeID == 407 or
+        mountTypeID == 242 or
+        mountTypeID == 247
+     then
       print(mountTypeID, creatureName)
     end
   end
 
   for key, value in pairs(types) do
-      print('Type ' .. key .. ': ' .. value)
+    print("Type " .. key .. ": " .. value)
   end
 end
 
 function ZoneMount_DoSpecial()
-  local editBox = ChatEdit_ChooseBoxForSend(DEFAULT_CHAT_FRAME) -- Get an edit box
-  ChatEdit_ActivateChat(editBox) -- Show the edit box
-  editBox:SetText("/mountspecial") -- Command goes here
-  ChatEdit_OnEnterPressed(editBox) -- Process command and hide (runs ChatEdit_SendText() and ChatEdit_DeactivateChat() respectively)
+  C_ChatInfo.PerformEmote("mountspecial")
+  -- local editBox = ChatEdit_ChooseBoxForSend(DEFAULT_CHAT_FRAME) -- Get an edit box
+  -- ChatEdit_ActivateChat(editBox) -- Show the edit box
+  -- editBox:SetText("/mountspecial") -- Command goes here
+  -- ChatEdit_OnEnterPressed(editBox) -- Process command and hide (runs ChatEdit_SendText() and ChatEdit_DeactivateChat() respectively)
 end
 
 function ZoneMount_InTable(tbl, item)
   for key, value in pairs(tbl) do
-      if value == item then return key end
+    if value == item then
+      return key
+    end
   end
   return false
 end
