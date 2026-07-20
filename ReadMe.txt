@@ -29,14 +29,17 @@ Slash Commands:
 ==============
 
 - /zm mount - mount or dismount.
+- /zm ra - summon a ride-along mount.
 - /zm about - show info about your current mount.
 - /zm __name__ - search for a mount by name (searching is case-insensitive and will find partial matches).
-- /zm macro - create a macro for easy use of Zone Mount.  
+- /zm macro - create a macro for easy use of Zone Mount.
+- /zm macro2 - create a macro for easy use of Zone Mount.
 - /zm do - make your mount do its special action if it is on the ground.
 
 Version History:
 ===============
 
+v 2.4.2: If you use the ride-along command or macro, the mount filters are correctly reset after use.
 v 2.4.1: Fixed error when using '/zm do' to perform mounts special action.
 v 2.4.0: Updated for 12.0.5. Possible fix for macro text appearing in chat.
 v 2.3.3: Looks for Oppressive Void debuff in Quel'Danas and summons ground mount if so.

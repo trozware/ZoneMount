@@ -324,10 +324,10 @@ function ZoneMount_FilterForRideAlong()
 end
 
 function ZoneMount_ValidMounts()
-  ZoneMount_clearFilters()
-
   if ZoneMount_ChooseRideAlong then
     ZoneMount_FilterForRideAlong()
+  else
+    ZoneMount_clearFilters()
   end
 
   local playerLevel = UnitLevel("player")
@@ -414,6 +414,8 @@ function ZoneMount_ValidMounts()
   if #valid_mounts == 0 and not inMaw then
     valid_mounts = chauffeur_mounts
   end
+
+  ZoneMount_clearFilters()
 
   return valid_mounts
 end
